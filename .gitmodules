@@ -1,0 +1,3 @@
+[submodule "myBlog/themes/yilia"]
+	path = myBlog/themes/yilia
+	url = https://github.com/litten/hexo-theme-yilia.git
