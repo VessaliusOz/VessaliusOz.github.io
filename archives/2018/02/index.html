@@ -6,19 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>requests模拟登录电子科技大学信息门户 | Vessalius的博客</title>
+  <title>Archives: 2018/2 | Vessalius的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="今天闲来无事，发现自己好像还一直没有做过关于模拟登录的东西。趁着十一休息，就尝试着来模拟登录一下电子科技大学(没错，就是我的大学)的信息门户。在尝试的过程中遇到了一些问题，所以特地来总结一下，还学到了关于HTTP协议的一些东西。感觉还是有些收获的。">
-<meta name="keywords" content="python">
-<meta property="og:type" content="article">
-<meta property="og:title" content="requests模拟登录电子科技大学信息门户">
-<meta property="og:url" content="http://yoursite.com/2017/10/05/requests模拟登录电子科技大学信息门户/index.html">
+  <meta name="description" content="电子科技大学 网络工程">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vessalius的博客">
+<meta property="og:url" content="http://yoursite.com/archives/2018/02/index.html">
 <meta property="og:site_name" content="Vessalius的博客">
-<meta property="og:description" content="今天闲来无事，发现自己好像还一直没有做过关于模拟登录的东西。趁着十一休息，就尝试着来模拟登录一下电子科技大学(没错，就是我的大学)的信息门户。在尝试的过程中遇到了一些问题，所以特地来总结一下，还学到了关于HTTP协议的一些东西。感觉还是有些收获的。">
-<meta property="og:updated_time" content="2018-02-22T13:56:13.660Z">
+<meta property="og:description" content="电子科技大学 网络工程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="requests模拟登录电子科技大学信息门户">
-<meta name="twitter:description" content="今天闲来无事，发现自己好像还一直没有做过关于模拟登录的东西。趁着十一休息，就尝试着来模拟登录一下电子科技大学(没错，就是我的大学)的信息门户。在尝试的过程中遇到了一些问题，所以特地来总结一下，还学到了关于HTTP协议的一些东西。感觉还是有些收获的。">
+<meta name="twitter:title" content="Vessalius的博客">
+<meta name="twitter:description" content="电子科技大学 网络工程">
   
     <link rel="alternative" href="/atom.xml" title="Vessalius的博客" type="application/atom+xml">
   
@@ -152,187 +150,64 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-requests模拟登录电子科技大学信息门户" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      requests模拟登录电子科技大学信息门户
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2018/02/23/xadmin-plugin-development/" class="archive-article-date">
+  	<time datetime="2018-02-23T01:18:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-23</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2018/02/23/xadmin-plugin-development/">xadmin插件开发</a>
     </h1>
   
 
-        
-        <a href="/2017/10/05/requests模拟登录电子科技大学信息门户/" class="archive-article-date">
-  	<time datetime="2017-10-05T09:33:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天闲来无事，发现自己好像还一直没有做过关于模拟登录的东西。趁着十一休息，就尝试着来模拟登录一下电子科技大学(没错，就是我的大学)的信息门户。在尝试的过程中遇到了一些问题，所以特地来总结一下，还学到了关于HTTP协议的一些东西。感觉还是有些收获的。</p>
-<a id="more"></a>
-<h3 id="HTTP流程分析"><a href="#HTTP流程分析" class="headerlink" title="HTTP流程分析"></a>HTTP流程分析</h3><p>为了弄清楚整个http请求的流程，我先把浏览器的缓存和cookies清空。然后具体的响应流程如下，</p>
-<h4 id="第一次请求登录页面"><a href="#第一次请求登录页面" class="headerlink" title="第一次请求登录页面"></a>第一次请求登录页面</h4><p>首先我们用get方式来请求登录页面，当我用firebug可以发现，第一次关于html页面的http请求头如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Host: idas.uestc.edu.cn</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br></pre></td></tr></table></figure>
-<p>这里没有什么特别的，我们来看看响应头的信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Server: openresty</span><br><span class="line">Date: Thu, 05 Oct 2017 12:50:07 GMT</span><br><span class="line">Content-Type: text/html; charset=UTF-8</span><br><span class="line">Content-Length: 7338</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Expires: Thu, 01 Jan 1970 00:00:00 GMT</span><br><span class="line">Cache-Control: no-cache, no-store</span><br><span class="line">Content-Language: en-US</span><br><span class="line">Set-Cookie: route=79410db11950631816595971e536cafe</span><br><span class="line">JSESSIONID_ids2=0001M_p72CMi9tHlgrt5ILP8Cbc:-1SP0UUR; Path=/</span><br></pre></td></tr></table></figure></p>
-<p>然后在这次的响应中我们可以发现其中有<code>Set-Cookie</code>字段,具体的cookie我们稍后再说。</p>
-<p>然后我们发现在随后的静态资源的请求中，所有的请求头里都有了<code>cookie</code>字段：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Host: idas.uestc.edu.cn</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0</span><br><span class="line">Accept: text/css,*/*;q=0.1</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Referer: http://idas.uestc.edu.cn/authserver/login?service=http://portal.uestc.edu.cn/index.portal</span><br><span class="line">Cookie: route=79410db11950631816595971e536cafe; JSESSIONID_ids2=0001M_p72CMi9tHlgrt5ILP8Cbc:-1SP0UUR</span><br><span class="line">Connection: keep-alive</span><br></pre></td></tr></table></figure></p>
-<p>而请求头里所带有的<code>cookie</code>的信息，和第一次响应头里的<code>Set-Cookie</code>里的信息是一样。</p>
-<h4 id="POST提交表单"><a href="#POST提交表单" class="headerlink" title="POST提交表单"></a>POST提交表单</h4><p>接下来我们在登录表单里填入了学号和密码以后，点击submit按钮，会发现最开始的时候有两个重定向，第一个是POST方法，第二个是GET方法。<br>我们先来看看这个POST请求做了那些哪些事情：</p>
-<ul>
-<li>提交表单到<code>http://idas.uestc.edu.cn/authserver/login?service=http://portal.uestc.edu.cn/index.portal</code>这个url<br>我们来看看提交了哪些内容：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">username	  xxxxxxx</span><br><span class="line">password	  xxxxxxx</span><br><span class="line">lt	     　　LT-338386-fI3husmUHWNeTe5D7r40…Xk6Olq31507177713997-qNsN-cas</span><br><span class="line">dllt	　　   userNamePasswordLogin</span><br><span class="line">execution	  e1s1</span><br><span class="line">_eventId	  submit</span><br><span class="line">rmShown	    1</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>我们可以发现，这次的form提交过程中，不仅仅提交了<code>username</code>和<code>password</code>字段，还提交了一些其他的字段<code>dllt</code>,<code>execution</code>,<code>_eventId</code>,<code>rmShown</code>和<code>lt</code>。<br>那么这些字段是哪里来的呢，我们回过头来看看审查<code>form</code>表单里的<code>input</code>元素，可以发现有如下元素：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"lt"</span> <span class="attr">value</span>=<span class="string">"LT-338386-fI3husmUHWNeTe5D7r40FQxXk6Olq31507177713997-qNsN-cas"</span> <span class="attr">type</span>=<span class="string">"hidden"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"dllt"</span> <span class="attr">value</span>=<span class="string">"userNamePasswordLogin"</span> <span class="attr">type</span>=<span class="string">"hidden"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"execution"</span> <span class="attr">value</span>=<span class="string">"e1s1"</span> <span class="attr">type</span>=<span class="string">"hidden"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"_eventId"</span> <span class="attr">value</span>=<span class="string">"submit"</span> <span class="attr">type</span>=<span class="string">"hidden"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"rmShown"</span> <span class="attr">value</span>=<span class="string">"1"</span> <span class="attr">type</span>=<span class="string">"hidden"</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>原来这是隐藏的表单。其中只有<code>lt</code>在每次请求时都会改变，这是为了防止<code>csrf</code>(<a href="http://www.cnblogs.com/hyddd/archive/2009/04/09/1432744.html" target="_blank" rel="noopener">什么是csrf</a>)攻击。而其他的不变的值可能只是一些事件的信息。所以，当你模拟登录时，只是提交<code>username</code>和<code>password</code>，是永远不可能成功的。<br>这一次的响应头如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Server: openresty</span><br><span class="line">Date: Thu, 05 Oct 2017 04:32:21 GMT</span><br><span class="line">Content-Length: 0</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Expires: Thu, 01 Jan 1970 00:00:00 GMT</span><br><span class="line">Cache-Control: no-cache, no-store</span><br><span class="line">Location: http://portal.uestc.edu.cn/?ticket=ST-90243-j1gAuBb6dD6WioPIHZAq1507177941379-iVs1-cas</span><br><span class="line">Content-Language: en-US</span><br><span class="line">Set-Cookie: CASPRIVACY=&quot;&quot;; Expires=Thu, 01-Dec-94 16:00:00 GMT; Path=/authserver/</span><br><span class="line">iPlanetDirectoryPro=AQIC5wM2LY4SfcwbTApm%2BRJenSML1WX1YbW1ambOYsDS5rI%3D%40AAJTSQACMDE%3D%23; Path=/; Domain=.uestc.edu.cn</span><br><span class="line">CASTGC=TGT-34220-baZa6T6w0cYhtFQmlQMkkhRGRbZbeRBxVI0tEfVyDSVAw6iokR1507177941262-r7bN-cas; Path=/authserver/; HttpOnly</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br></pre></td></tr></table></figure></p>
-<p>其中又有<code>Set-Cookie</code>字段，这是用来设置新的<code>cookie</code>的信息，而我们来看看其中的<code>location</code>字段，这里指向的是重定向的地址，<code>Location</code>首部给出的是客户端用来临时定位的资源，为<code>http://portal.uestc.edu.cn/?ticket=ST-90243-j1gAuBb6dD6WioPIHZAq1507177941379-iVs1-cas</code></p>
-<ul>
-<li>于是，接下来又是一个重定向，这就是GET方法的重定向，这次请求的url为<code>http://portal.uestc.edu.cn/?ticket=ST-90243-j1gAuBb6dD6WioPIHZAq1507177941379-iVs1-cas</code>.<br>我们看看这次的请求发生了什么。<br>这一次的请求头为<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host: portal.uestc.edu.cn</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Referer: http://idas.uestc.edu.cn/authserver/login?service=http%3A%2F%2Fportal.uestc.edu.cn%2F</span><br><span class="line">Cookie: iPlanetDirectoryPro=AQIC5wM2LY4SfcwbTApm%2BRJenSML1WX1YbW1ambOYsDS5rI%3D%40AAJTSQACMDE%3D%23</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>我们发现这一次，他的<code>cookie</code>值变成了上一次响应中<code>Set-Cookie</code>的值。而这一次的响应头为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Server: openresty</span><br><span class="line">Date: Thu, 05 Oct 2017 04:32:21 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 154</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Set-Cookie: MOD_AUTH_CAS=MOD_AUTH_ST-90243-j1gAuBb6dD6WioPIHZAq1507177941379-iVs1-cas; path=/; Httponly</span><br><span class="line">Location: http://portal.uestc.edu.cn/</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>接下来就是请求实际的信息门户的地址,请求头为:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host: portal.uestc.edu.cn</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Referer: http://idas.uestc.edu.cn/authserver/login?service=http%3A%2F%2Fportal.uestc.edu.cn%2F</span><br><span class="line">Cookie: iPlanetDirectoryPro=AQIC5wM2LY4SfcwbTApm%2BRJenSML1WX1YbW1ambOYsDS5rI%3D%40AAJTSQACMDE%3D%23; MOD_AUTH_CAS=MOD_AUTH_ST-90243-j1gAuBb6dD6WioPIHZAq1507177941379-iVs1-cas</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>响应头为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Server: openresty</span><br><span class="line">Date: Thu, 05 Oct 2017 04:32:21 GMT</span><br><span class="line">Content-Type: text/html;charset=UTF-8</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Expires: Thu, 01 Jan 1970 00:00:00 GMT</span><br><span class="line">Content-Language: zh-CN</span><br><span class="line">Set-Cookie: route=bd484519ebc8081db0dadf641f700565</span><br><span class="line">JSESSIONID=0000c1kMIqpEwBqT49FbsOjuZ3U:19sdu3g1i; Path=/</span><br></pre></td></tr></table></figure></p>
-<p>其中也带了<code>Set-Cookie</code>的信息，接下来请求静态文件等等，都是用的最后一次的<code>Set-Cookie</code>里的<code>cookie</code>的信息。说明此时就已经完成登录了。至此，整个登录的流程我们就已经知道的很清楚了。</p>
-<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>那写模拟登录的代码就非常轻松咯，这里用到的是<code>requests</code>库:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"># !/usr/bin/python3</span><br><span class="line"># -*- encoding:utf8-*-</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">from bs4 import BeautifulSoup</span><br><span class="line"></span><br><span class="line">class ImitateLogin:</span><br><span class="line"></span><br><span class="line">    def __init__(self,username, password,login_url, headers):</span><br><span class="line">        self.login_url = login_url</span><br><span class="line">        self.headers = headers</span><br><span class="line">        # 用来保存每次请求的cookie</span><br><span class="line">        self.all_cookies = None</span><br><span class="line">        # 你的用户名和密码</span><br><span class="line">        self.post_data = dict(username=username, password=password)</span><br><span class="line"></span><br><span class="line">    # 解析所有的input标签</span><br><span class="line">    def parse_input_tags(self, text):</span><br><span class="line">        soup = BeautifulSoup(text, &quot;lxml&quot;)</span><br><span class="line">        input_list = soup.find_all(&quot;input&quot;)</span><br><span class="line">        for input_tag in input_list[2:7]:</span><br><span class="line">            self.post_data[input_tag.get(&quot;name&quot;)] = input_tag.get(&quot;value&quot;)</span><br><span class="line"></span><br><span class="line">    # 登录页面</span><br><span class="line">    def get_index(self):</span><br><span class="line">        request = requests.get(self.login_url, headers=headers)</span><br><span class="line">        self.all_cookies = request.cookies</span><br><span class="line">        self.parse_input_tags(request.text)</span><br><span class="line">        self.post()</span><br><span class="line"></span><br><span class="line">    # 发post表单</span><br><span class="line">    def post(self):</span><br><span class="line">        # print(self.all_cookies)</span><br><span class="line">        post = requests.post(login_url, data=self.post_data,</span><br><span class="line">                            allow_redirects=False, cookies=self.all_cookies)</span><br><span class="line">        post_cookie_dict = requests.utils.dict_from_cookiejar(post.cookies)</span><br><span class="line">        requests.utils.add_dict_to_cookiejar(self.all_cookies, post_cookie_dict)</span><br><span class="line">        # print(post.headers)</span><br><span class="line">        location = post.headers[&quot;Location&quot;]</span><br><span class="line">        self.get_redirect_title(location)</span><br><span class="line"></span><br><span class="line">    # 第二次重定向</span><br><span class="line">    def get_redirect_title(self, location):</span><br><span class="line">        get_title = requests.get(location, allow_redirects=False,</span><br><span class="line">                                cookies=self.all_cookies)</span><br><span class="line">        get_title_cookies_dict = requests.utils.dict_from_cookiejar(get_title.cookies)</span><br><span class="line">        requests.utils.add_dict_to_cookiejar(self.all_cookies,</span><br><span class="line">                                             get_title_cookies_dict)</span><br><span class="line">        location = get_title.headers[&quot;Location&quot;]</span><br><span class="line">        self.get_finall(location)</span><br><span class="line"></span><br><span class="line">    # 到主页面</span><br><span class="line">    def get_finall(self, location):</span><br><span class="line">        finall = requests.get(location, allow_redirects=False,</span><br><span class="line">                             cookies=self.all_cookies)</span><br><span class="line">        print(finall.text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    login_url = &quot;http://idas.uestc.edu.cn/authserver/login?service=http://portal.uestc.edu.cn/index.portal&quot;</span><br><span class="line"></span><br><span class="line">    headers = &#123;</span><br><span class="line">      &quot;Host&quot;: &quot;idas.uestc.edu.cn&quot;,</span><br><span class="line">	    &quot;User-Agent&quot;: &quot;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0&quot;,</span><br><span class="line">	    &quot;Accept&quot;: &quot;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&quot;,</span><br><span class="line">	    &quot;Accept-Language&quot;: &quot;zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3&quot;,</span><br><span class="line">	    &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,</span><br><span class="line">	    &quot;Referer&quot;: &quot;http://idas.uestc.edu.cn/authserver/login?service=http://portal.uestc.edu.cn/index.portal&quot;,</span><br><span class="line">	    &quot;Connection&quot;: &quot;keep-alive&quot;,</span><br><span class="line">	    &quot;Upgrade-Insecure-Requests&quot;: &quot;1&quot;,</span><br><span class="line">	    &quot;Cache-Control&quot;: &quot;max-age=0&quot;</span><br><span class="line">&#125;  </span><br><span class="line">    # 传入你的username和password</span><br><span class="line">    login = ImitateLogin(username, password, login_url, headers)</span><br><span class="line">    login.get_index()</span><br><span class="line"></span><br><span class="line">    # other_process.......</span><br><span class="line">    do_something()</span><br></pre></td></tr></table></figure>
-<p>到这里，模拟登录就成功了，但是我们对每个请求都要手动存储一遍cookie是非常麻烦的，所以有更好的方法嘛？</p>
-<p>还好<code>requests</code>提供了<code>Session</code>对象来供轻松地处理<code>cookie</code>,代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">#! /usr/bin/python3</span><br><span class="line"># -*- encoding:utf8-*-</span><br><span class="line">import requests</span><br><span class="line">from bs4 import BeautifulSoup</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class Login:</span><br><span class="line"></span><br><span class="line">    def __init__(self, username, password, login_url, headers):</span><br><span class="line">        self.login_url = login_url</span><br><span class="line">        self.headers = headers</span><br><span class="line">        self.session = requests.Session()</span><br><span class="line">        self.post_data = dict(username=username, password=password)</span><br><span class="line"></span><br><span class="line">    def get_index(self):</span><br><span class="line">        get_index = self.session.get(self.login_url, headers=headers)</span><br><span class="line">        self.parse_input_tags(get_index.text)</span><br><span class="line">        self.post()</span><br><span class="line"></span><br><span class="line">    def parse_input_tags(self, text):</span><br><span class="line">        soup = BeautifulSoup(text, &quot;lxml&quot;)</span><br><span class="line">        input_list = soup.find_all(&quot;input&quot;)</span><br><span class="line">        for input_tag in input_list[2:7]:</span><br><span class="line">            self.post_data[input_tag.get(&quot;name&quot;)] = input_tag.get(&quot;value&quot;)</span><br><span class="line"></span><br><span class="line">    def post(self):</span><br><span class="line">        post = self.session.post(self.login_url, data=self.post_data)</span><br><span class="line">        print(post.text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line"></span><br><span class="line">    loginUrl = &quot;http://idas.uestc.edu.cn/authserver/login?service=http://portal.uestc.edu.cn/index.portal&quot;</span><br><span class="line"></span><br><span class="line">    headers = &#123;</span><br><span class="line">        &quot;Host&quot;: &quot;idas.uestc.edu.cn&quot;,</span><br><span class="line">        &quot;User-Agent&quot;: &quot;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0&quot;,</span><br><span class="line">        &quot;Accept&quot;: &quot;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&quot;,</span><br><span class="line">        &quot;Accept-Language&quot;: &quot;zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3&quot;,</span><br><span class="line">        &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,</span><br><span class="line">        &quot;Referer&quot;: &quot;http://idas.uestc.edu.cn/authserver/login?service=http://portal.uestc.edu.cn/index.portal&quot;,</span><br><span class="line">        &quot;Connection&quot;: &quot;keep-alive&quot;,</span><br><span class="line">        &quot;Upgrade-Insecure-Requests&quot;: &quot;1&quot;,</span><br><span class="line">        &quot;Cache-Control&quot;: &quot;max-age=0&quot;</span><br><span class="line">    &#125;</span><br><span class="line">    username = &quot;xxxxxx&quot;</span><br><span class="line">    password = &quot;xxxxxx&quot;</span><br><span class="line">    login_obj = Login(username, password, loginUrl, headers)</span><br><span class="line">    login_obj.get_index()</span><br><span class="line"></span><br><span class="line">    #do_something_else</span><br><span class="line">    do_something()</span><br></pre></td></tr></table></figure></p>
-<p>这就是以上使用<code>Session</code>对象的全部代码，是不是简洁多了。在代码中，你根本不用考虑<code>cookie</code>的事情。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">xadmin</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2017/10/05/requests模拟登录电子科技大学信息门户/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2017/10/19/在Django中使用Celery/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          在Django中使用Celery
-        
-      </div>
-    </a>
   
   
-    <a href="/2017/10/01/九月不是久月/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">九月不是久月</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -355,8 +230,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

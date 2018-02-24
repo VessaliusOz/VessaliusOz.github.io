@@ -152,6 +152,92 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-xadmin-plugin-development" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/23/xadmin-plugin-development/">xadmin插件开发</a>
+    </h1>
+  
+
+        
+        <a href="/2018/02/23/xadmin-plugin-development/" class="archive-article-date">
+  	<time datetime="2018-02-23T01:18:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>由于项目需要，最近一直在鼓捣xadmin，xadmin与原有的admin相比，有非常多的优点，不仅界面样式变得更加好看，系统还预置了非常好用的插件。而且插件还是可以自己开发的，总而言之，就是与原有的admin相比，更加好看，功能也更多。</p>
+<p>xadmin提供了许多与原有admin相同的API,所以上手并不会那么的难。但还是有一些改变的地方。需要注意。</p>
+<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><p>xadmin官方文档对插件系统的描述如下:</p>
+<blockquote>
+<p>想要了解 Xadmin 的插件系统架构首先需要了解 Xadmin AdminView 的概念。 简单来说，就是 Xadmin 系统中每一个页面都是一个 AdminView 对象返回的 HttpResponse 结果。Xadmin 的插件系统做的事情其实就是在 AdminView 运行过程中改变其执行的逻辑， 或是改变其返回的结果，起到修改或增强原有功能的效果。</p>
+</blockquote>
+<p>在实际运用的过程中，我们可以制作插件来给页面添加新的布局、按钮等，来为页面添加更多自定义功能。</p>
+        
+          <a class="article-more-a" href="/2018/02/23/xadmin-plugin-development/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">xadmin</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/02/23/xadmin-plugin-development/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-django-channels初探" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -852,83 +938,10 @@
 
 
   
-    <article id="post-nginx-uwsgi-django部署网站以及关于静态文件的分发等相关问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/05/14/nginx-uwsgi-django部署网站以及关于静态文件的分发等相关问题/">一些关于nginx配置的问题</a>
-    </h1>
-  
-
-        
-        <a href="/2017/05/14/nginx-uwsgi-django部署网站以及关于静态文件的分发等相关问题/" class="archive-article-date">
-  	<time datetime="2017-05-14T15:23:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-05-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在大致做完自己的第一个完整项目之后，拖了快两个月才开始总结，当时踩的坑有好多，现在基本都忘了，赶快趁着对一些坑还有印象的时候赶紧总结一下备忘。</p>
-<p>以下是自己项目的nginx的配置文件，有一些是值得说明的地方：<br>
-        
-          <a class="article-more-a" href="/2017/05/14/nginx-uwsgi-django部署网站以及关于静态文件的分发等相关问题/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">nginx</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/05/14/nginx-uwsgi-django部署网站以及关于静态文件的分发等相关问题/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
   
 
 
@@ -1018,11 +1031,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">MongoEngine</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">MongoDB</a>
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1030,11 +1039,23 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
+                <a href="javascript:void(0)" class="js-tag color2">xadmin</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">django</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">MongoEngine</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">MongoDB</a>
               </li>
             
             <div class="clearfix"></div>
