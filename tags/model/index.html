@@ -6,19 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Django拓展内建User模型字段 | Vessalius的博客</title>
+  <title>Tag: model | Vessalius的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="最近准备自己从头到尾写一个有完善功能的、有一定规模的web应用，类似于论坛，又有点像知乎那样的应用。自己的脑海里已经有了这个应用的大概功能和样子，希望自己能在暑假结束的时候，基本完成它。 今天写完了关于用户注册、登录、注销的功能。在开发的过程中，纠结于是自己重新写User模块还是对Django内建的User模块进行字段扩展，最后还是选择了后者。考虑到用Django内建的User模块，在认证这一块已">
-<meta name="keywords" content="Django">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Django拓展内建User模型字段">
-<meta property="og:url" content="http://yoursite.com/2017/07/18/Django拓展内建User模型字段/index.html">
+  <meta name="description" content="电子科技大学 网络工程">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vessalius的博客">
+<meta property="og:url" content="http://yoursite.com/tags/model/index.html">
 <meta property="og:site_name" content="Vessalius的博客">
-<meta property="og:description" content="最近准备自己从头到尾写一个有完善功能的、有一定规模的web应用，类似于论坛，又有点像知乎那样的应用。自己的脑海里已经有了这个应用的大概功能和样子，希望自己能在暑假结束的时候，基本完成它。 今天写完了关于用户注册、登录、注销的功能。在开发的过程中，纠结于是自己重新写User模块还是对Django内建的User模块进行字段扩展，最后还是选择了后者。考虑到用Django内建的User模块，在认证这一块已">
-<meta property="og:updated_time" content="2018-02-22T13:57:28.974Z">
+<meta property="og:description" content="电子科技大学 网络工程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Django拓展内建User模型字段">
-<meta name="twitter:description" content="最近准备自己从头到尾写一个有完善功能的、有一定规模的web应用，类似于论坛，又有点像知乎那样的应用。自己的脑海里已经有了这个应用的大概功能和样子，希望自己能在暑假结束的时候，基本完成它。 今天写完了关于用户注册、登录、注销的功能。在开发的过程中，纠结于是自己重新写User模块还是对Django内建的User模块进行字段扩展，最后还是选择了后者。考虑到用Django内建的User模块，在认证这一块已">
+<meta name="twitter:title" content="Vessalius的博客">
+<meta name="twitter:description" content="电子科技大学 网络工程">
   
     <link rel="alternative" href="/atom.xml" title="Vessalius的博客" type="application/atom+xml">
   
@@ -152,175 +150,64 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Django拓展内建User模型字段" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      Django拓展内建User模型字段
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2018/02/24/the-_meta-in-django/" class="archive-article-date">
+  	<time datetime="2018-02-24T13:31:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-24</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2018/02/24/the-_meta-in-django/">Django中_meta的运用</a>
     </h1>
   
 
-        
-        <a href="/2017/07/18/Django拓展内建User模型字段/" class="archive-article-date">
-  	<time datetime="2017-07-18T14:38:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近准备自己从头到尾写一个有完善功能的、有一定规模的web应用，类似于论坛，又有点像知乎那样的应用。自己的脑海里已经有了这个应用的大概功能和样子，希望自己能在暑假结束的时候，基本完成它。</p>
-<p>今天写完了关于用户注册、登录、注销的功能。在开发的过程中，纠结于是自己重新写User模块还是对Django内建的User模块进行字段扩展，最后还是选择了后者。考虑到用Django内建的User模块，在认证这一块已经比较成熟，而且非常方便和安全，它可以处理用户账户、权限、和基于cookie的用户会话。这些正是我需要的功能。不过在实际的扩展过程中，还是遇到了一些坑，所以写下这篇来作为总结。其中参考了许多地方，详细链接见文章最后。<br><a id="more"></a></p>
-<h3 id="使用OneToOneField-使用Profile扩展User模块"><a href="#使用OneToOneField-使用Profile扩展User模块" class="headerlink" title="使用OneToOneField(使用Profile扩展User模块)"></a>使用OneToOneField(使用Profile扩展User模块)</h3><p>我见过的最常用的办法就是通过OneToOneField与现有的User模块进行一对一的关联，一般存储与现有用户模型相关而又与验证过程无关的额外信息时。我们通常称之为用户配置(User Profile)。这种方法会额外增加对相关信息的查询和检索。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserProfile</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    user = models.OneToOneField(User, verbose_name=<span class="string">"账户"</span>, related_name=<span class="string">'user_profile'</span>,</span><br><span class="line">                                on_delete=models.SET_NULL, null=<span class="keyword">True</span>, default=<span class="keyword">None</span>, unique=<span class="keyword">True</span>)</span><br><span class="line">    sex = models.IntegerField(<span class="string">'性别'</span>, choices=sexuality, default=<span class="number">0</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    logo = models.CharField(<span class="string">'一句话介绍自己'</span>, default=<span class="keyword">None</span>, null=<span class="keyword">True</span>, max_length=<span class="number">200</span>)</span><br><span class="line">    photo = models.ImageField(<span class="string">'头像'</span>, upload_to=<span class="string">'images/user'</span>, default=<span class="keyword">None</span>, null=<span class="keyword">True</span>, blank=<span class="keyword">True</span>)</span><br><span class="line">    datetime = models.DateTimeField(<span class="string">'加入时间'</span>, default=datetime.now)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.user.username</span><br></pre></td></tr></table></figure></p>
-<p>当我们在定义一些信号就可以使得当我们创建和更新用户实例时，UserProfile模块也可以被自动创建和更新。代码如下:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@receiver(post_save, sender=User)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_user_profile</span><span class="params">(sender, instance, created, **kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> created:</span><br><span class="line">        UserProfile.objects.create(user=instance)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@receiver(post_save, sender=User)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">save_user_profile</span><span class="params">(sender, instance, **kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> instance.user_profile:</span><br><span class="line">        instance.user_profile.save()</span><br></pre></td></tr></table></figure></p>
-<p>关于信号的概念，我们下次在讨论。<br>如此以来，对于User的保存和创建等事件的发生，都会被信号连接到用户模型，这种信号被称为post_save.</p>
-<p>还有关于数据库查询的优化问题，这里简单的说一下，Django关联为浅关联。也就是说当进入一个相关的属性时，Django所做的工作也只是查询数据库而已。有时候这会造成一些意想不到的后果，比如像开启成千上万的查询进程。这个问题可以使用select_related方法缓和一些。<br>当预知将会进入相关数据的查询时，可以使用简单的查询先将它取出来。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">users = User.objects.all().select_related(<span class="string">'profile'</span>)</span><br></pre></td></tr></table></figure></p>
-<p>还有一些关于admin的配置，可以使的User与UserProfile一起进行内联编辑:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*-encoding:utf8-*-</span></span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> forum.models <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> django.contrib.auth.models <span class="keyword">import</span> Group</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserProfileInline</span><span class="params">(admin.StackedInline)</span>:</span></span><br><span class="line">    model = UserProfile</span><br><span class="line">    verbose_name = <span class="string">'用户信息'</span></span><br><span class="line">    verbose_name_plural = <span class="string">'用户信息'</span></span><br><span class="line">    max_num = <span class="number">1</span></span><br><span class="line">    can_delete = <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserProfileAdmin</span><span class="params">(admin.ModelAdmin)</span>:</span></span><br><span class="line">    inlines = (UserProfileInline,)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">admin.site.unregister(User)</span><br><span class="line">admin.site.unregister(Group)</span><br><span class="line">admin.site.register(User, UserProfileAdmin)</span><br></pre></td></tr></table></figure></p>
-<p><strong>其中一定要先unregister(User)</strong>，否则会报User模块已经被注册的错误。因为我的项目里用不到Group，所以为了方便，也把Group给unregister了。</p>
-<h3 id="继承AbstractUser"><a href="#继承AbstractUser" class="headerlink" title="继承AbstractUser"></a>继承AbstractUser</h3><p>这种方法相当的直接，因为django.contrib.auth.models.AbstractUser类提供了把默认用户作为抽象模型的整套的实现方案。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> django.contrib.auth.models <span class="keyword">import</span> AbstractUser</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(AbstractUser)</span>:</span></span><br><span class="line">    bio = models.TextField(max_length=<span class="number">500</span>, blank=<span class="keyword">True</span>)</span><br><span class="line">    location = models.CharField(max_length=<span class="number">30</span>, blank=<span class="keyword">True</span>)</span><br><span class="line">    birth_date = models.DateField(null=<span class="keyword">True</span>, blank=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure></p>
-<p>然后必须更新settings.py,定义AUTH_USER_MODEL属性。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AUTH_USER_MODEL=‘core.User’</span><br></pre></td></tr></table></figure></p>
-<p>这种方案的需要在项目开始时就考虑完成并需要额外的维护。它将会改变整个数据库的架构。如果创建外键导入用户模型设置 （from django.conf import settings）而且把引用settings.AUTH_USER_MODEL代替直接引用自定义的用户模型会更好。</p>
-<p>详细全文链接见<a href="http://python.jobbole.com/86806/" target="_blank" rel="noopener">这里</a></p>
-<h3 id="关于User-create-user-和-User-create-的区别和认证对应的表的内容"><a href="#关于User-create-user-和-User-create-的区别和认证对应的表的内容" class="headerlink" title="关于User.create_user() 和　User.create() 的区别和认证对应的表的内容"></a>关于User.create_user() 和　User.create() 的区别和认证对应的表的内容</h3><p>如果想要创建具有完整认证功能和会话功能的用户，我们应该使用create_user()这个方法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;	<span class="keyword">from</span>	django.contrib.auth.models	<span class="keyword">import</span>	User</span><br><span class="line">&gt;&gt;&gt;	user = User.objects.create_user(<span class="string">'john'</span>,	<span class="string">'lennon@thebeatles.c</span></span><br><span class="line"><span class="string">om'</span>,	<span class="string">'johnpassword'</span>)</span><br><span class="line"><span class="comment">#	At this point, user is a User object that has already been saved</span></span><br><span class="line"><span class="comment">#	to the database. You can continue to change its attributes</span></span><br><span class="line"><span class="comment"># if you want to change other fields.</span></span><br><span class="line">&gt;&gt;&gt;	user.last_name = <span class="string">'Lennon'</span></span><br><span class="line">&gt;&gt;&gt;	user.save()</span><br></pre></td></tr></table></figure></p>
-<p>而仅仅使用create()方法创建的时候，我们可以发现，在django admin中，他的密码是以明文的形式存储的，并不如我们用create_user()方法创建时的哈希值。这就是用create()方法创建的用户无法用authenticate()方法认证通过的原因。<br>这是sqlite里auth_user表的内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; select * from auth_user</span><br><span class="line">   ...&gt; ;</span><br><span class="line">1|pbkdf2_sha256$36000$0NkfnNyK0SV0$5+7ucNUHJnELtn2WIjTww2DVldkJCHNoWclOLv5hZ9g=|2017-07-18 09:17:37.310208|1||||1|1|2017-07-14 14:26:00|vessalius</span><br><span class="line">2|12345678||0|||111@qq.com|0|1|2017-07-17 09:23:00|xc</span><br><span class="line">10|pbkdf2_sha256$36000$IadFEnx7LbTA$vdxLB/JV5Xn0g+WUeX6aLHbZSYY25+PO/ajJ//p3pkI=|2017-07-18 04:28:00|0||||0|1|2017-07-18 03:40:00|xz</span><br></pre></td></tr></table></figure></p>
-<p>其中xc是用create()方法创建的，它的密码为12345678，是直接明文写入password字段，而vessalius和xz的密码是加密的。</p>
-<p>所以当你使用create()方法创建一个User对象的时候，密码是明文存储，此时可以直接使用get()方法得到这个对象,而用create_user()方法创建的对象无法用get()方法的得到,此时会报错，所以，我们要得到一个User对象，应该使用authenticate()，虽然看起来很复杂，但是它实际上是和数据库里的存储的值是统一的，Django的create_user()和authenticate()方法只是封装了加密解密的细节：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;user = User.objects.get(username=<span class="string">'xc'</span>, password=<span class="string">'12345678'</span>)</span><br><span class="line">&gt;&gt;&gt;user</span><br><span class="line">&lt;User: xc&gt;</span><br><span class="line">&gt;&gt;&gt;user = User.objects.get(username=<span class="string">'vessalius'</span>,</span><br><span class="line">password=<span class="string">'xc19970113'</span>)</span><br><span class="line">django.contrib.auth.models.DoesNotExist: User matching query does <span class="keyword">not</span> exist.</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;<span class="keyword">from</span> django.contrib.auth <span class="keyword">import</span> authenticate</span><br><span class="line">&gt;&gt;&gt;user = authenticate(username=<span class="string">'vessalius'</span>, password=<span class="string">'xc19970113'</span>)</span><br><span class="line">user</span><br><span class="line">&lt;User: vessalius&gt;</span><br></pre></td></tr></table></figure></p>
-<p>同样，因为密码的存储是哈希值，所以，我们在修改密码的时候，不能直接尝试修改用户的password属性，而是可以使用set_password()这个方法来更新密码，所以可以发现创建用户用create_user()辅助函数，修改密码用set_password()辅助函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;	from	django.contrib.auth.models	import	User</span><br><span class="line">&gt;&gt;&gt;	u	=	User.objects.get(username=&apos;john&apos;)</span><br><span class="line">&gt;&gt;&gt;	u.set_password(&apos;new	password&apos;)</span><br><span class="line">&gt;&gt;&gt;	u.save()</span><br></pre></td></tr></table></figure></p>
-<p>关于认证模块的细节我们以后再详细讨论。</p>
-<h3 id="关于Form"><a href="#关于Form" class="headerlink" title="关于Form"></a>关于Form</h3><p>如果我们的表单认证中有关于文件上传的操作时，例子如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserProfile</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    user = models.OneToOneField(User, verbose_name=<span class="string">"账户"</span>, related_name=<span class="string">'user_profile'</span>,</span><br><span class="line">                                on_delete=models.SET_NULL, null=<span class="keyword">True</span>, default=<span class="keyword">None</span>, unique=<span class="keyword">True</span>)</span><br><span class="line">    sex = models.IntegerField(<span class="string">'性别'</span>, choices=sexuality, default=<span class="number">0</span>, null=<span class="keyword">True</span>)</span><br><span class="line">    logo = models.CharField(<span class="string">'一句话介绍自己'</span>, default=<span class="keyword">None</span>, null=<span class="keyword">True</span>, max_length=<span class="number">200</span>)</span><br><span class="line">    photo = models.ImageField(<span class="string">'头像'</span>, upload_to=<span class="string">'images/user'</span>, default=<span class="keyword">None</span>, null=<span class="keyword">True</span>, blank=<span class="keyword">True</span>)</span><br><span class="line">    datetime = models.DateTimeField(<span class="string">'加入时间'</span>, default=datetime.now)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.user.username</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModifyProfileForm</span><span class="params">(forms.ModelForm)</span>:</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        model = UserProfile</span><br><span class="line">        fields = [<span class="string">'sex'</span>, <span class="string">'logo'</span>, <span class="string">'photo'</span>]</span><br></pre></td></tr></table></figure></p>
-<p>若要用form来上传photo字段的图片，需要在表单中添加如下代码,否则request.POST字典为空：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>而相应的View为：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@method_decorator(login_required, name='dispatch')</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ModifyProfileView</span><span class="params">(TemplateView)</span>:</span></span><br><span class="line">    template_name = <span class="string">'forum/modify.html'</span></span><br><span class="line">    form_class = ModifyProfileForm</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_context_data</span><span class="params">(self, **kwargs)</span>:</span></span><br><span class="line">        context = super(ModifyProfileView, self).get_context_data(**kwargs)</span><br><span class="line">        context[<span class="string">'modify_form'</span>] = self.form_class</span><br><span class="line">        <span class="keyword">return</span> context</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> render(request, <span class="string">'forum/modify.html'</span>, &#123;<span class="string">'modify_form'</span>: self.form_class&#125;)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        modify_form = self.form_class(request.POST, request.FILES, instance=request.user.user_profile)</span><br><span class="line">        <span class="keyword">if</span> modify_form.is_valid():</span><br><span class="line">            print(request.FILES)</span><br><span class="line">            modify_form.save()</span><br><span class="line">            <span class="keyword">return</span> HttpResponse(<span class="string">"modify successfully"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> render(request, <span class="string">'forum/modify.html'</span>, &#123;<span class="string">'modify_form'</span>: self.form_class&#125;)</span><br></pre></td></tr></table></figure></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">model</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2017/07/18/Django拓展内建User模型字段/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2017/07/21/python使用smtplib库发送邮件/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          python使用smtplib库发送邮件
-        
-      </div>
-    </a>
   
   
-    <a href="/2017/07/14/MongoEngine初探/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">MongoEngine初探</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -343,9 +230,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
