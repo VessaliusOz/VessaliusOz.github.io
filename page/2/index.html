@@ -152,6 +152,83 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Django拓展内建User模型字段" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/07/18/Django拓展内建User模型字段/">Django拓展内建User模型字段</a>
+    </h1>
+  
+
+        
+        <a href="/2017/07/18/Django拓展内建User模型字段/" class="archive-article-date">
+  	<time datetime="2017-07-18T14:38:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近准备自己从头到尾写一个有完善功能的、有一定规模的web应用，类似于论坛，又有点像知乎那样的应用。自己的脑海里已经有了这个应用的大概功能和样子，希望自己能在暑假结束的时候，基本完成它。</p>
+<p>今天写完了关于用户注册、登录、注销的功能。在开发的过程中，纠结于是自己重新写User模块还是对Django内建的User模块进行字段扩展，最后还是选择了后者。考虑到用Django内建的User模块，在认证这一块已经比较成熟，而且非常方便和安全，它可以处理用户账户、权限、和基于cookie的用户会话。这些正是我需要的功能。不过在实际的扩展过程中，还是遇到了一些坑，所以写下这篇来作为总结。其中参考了许多地方，详细链接见文章最后。<br>
+        
+          <a class="article-more-a" href="/2017/07/18/Django拓展内建User模型字段/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/07/18/Django拓展内建User模型字段/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-MongoEngine初探" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -405,6 +482,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C语言</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">内存</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Django</a>
               </li>
              
@@ -417,14 +502,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">django</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">model</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">nginx</a>
               </li>
              
@@ -434,6 +511,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">django</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">model</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -488,7 +573,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     	<section class="tools-section tools-section-me" q-show="aboutme">
   	  	
-  	  		<div class="aboutme-wrap" id="js-aboutme">Vessalius，&lt;br&gt;电子科技大学程序猿一只&lt;br&gt;&lt;br&gt;热爱我家宝宝，&lt;br/&gt;目前是一枚pythoner&lt;br/&gt;&lt;br/&gt;胆小认生，不易相处，&lt;br&gt;年轻无为，卖马为生。</div>
+  	  		<div class="aboutme-wrap" id="js-aboutme">Vessalius，&lt;br&gt;电子科技大学程序猿一只&lt;br&gt;&lt;br&gt;热爱我家宝宝，&lt;br/&gt;目前是一枚pythoner&lt;br/&gt;&lt;br/&gt;胆小认生，不易相处，&lt;br&gt;年轻无为，卖马为生。&lt;br&gt;这世上哪有什么平白无故的横空出世，不过都是经过精心准备的必然结果。所有光鲜亮丽的背后，都透露着无比的寂寞。但每段平静安详的努力之后，都映射着人生轨迹的跳跃。你要相信，时光，不会辜负每一个平静努力的人。&lt;/br&gt;</div>
   	  	
     	</section>
     
