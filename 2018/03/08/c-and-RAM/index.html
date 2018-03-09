@@ -15,7 +15,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/03/08/c-and-RAM/index.html">
 <meta property="og:site_name" content="Vessalius的博客">
 <meta property="og:description" content="C语言和内存概述最近又重新开始看关于C语言的东西了。感觉自己的python学的还可以，但是学了python之后，觉得python对底层的细节封装的太好了，所以对很多东西都是知其然不知其所以然。想着python其实是使用C语言实现的，所以就又重新开始鼓捣C语言的东西了。 其实C语言在大一上的时候就学习了，但是因为当时自己是第一次接触，也没有带电脑，实践的时间又非常少，所以打心底有点畏惧，觉得C语言很">
-<meta property="og:updated_time" content="2018-03-09T02:09:34.979Z">
+<meta property="og:updated_time" content="2018-03-09T02:14:29.495Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C语言和内存">
 <meta name="twitter:description" content="C语言和内存概述最近又重新开始看关于C语言的东西了。感觉自己的python学的还可以，但是学了python之后，觉得python对底层的细节封装的太好了，所以对很多东西都是知其然不知其所以然。想着python其实是使用C语言实现的，所以就又重新开始鼓捣C语言的东西了。 其实C语言在大一上的时候就学习了，但是因为当时自己是第一次接触，也没有带电脑，实践的时间又非常少，所以打心底有点畏惧，觉得C语言很">
@@ -201,7 +201,7 @@
 <p>我们知道，栈是一种数据结构，C语言中使用栈来保存局部变量（注意，下文中不强调的情况下，局部变量均指非静态局部变量）。栈是被发明出来管理内存的，是一种维护内存的机制，这就是栈的本质。</p>
 <p>C语言中的局部变量是用栈来实现的。</p>
 <p>我们在C语言中定义一个局部变量时（int a），编译器会在栈中分配一段空间（4字节）给这个局部变量用。分配时栈顶指针会移动出4个字节空间给局部变量a用的意思就是，将这4字节的栈内存的内存地址和我们定义的局部变量名a关联起来，对应的栈操作为入栈，就是将数据存入变量a中。需要注意的是，这里栈指针的移动和内存分配是自动完成的，不需要程序参与。</p>
-<p>然后等我们函数退出的时候，局部变量就会被释放。对应的操作是弹栈（出栈）。出栈时也是栈顶指针移动，将栈空间中与a关联的那4个字节空间释放，这个动作也是自动的，不需要人为干预。<em>所以我们在写代码的时候，一定不要从被调函数返回一个局部变量的地址给主调函数，因为在函数执行完后局部变量就释放了，这个地址里面的内容有可能被新的内容填充。这时如果你在主调函数里面使用它，就很有可能造成数据错误。</em></p>
+<p>然后等我们函数退出的时候，局部变量就会被释放。对应的操作是弹栈（出栈）。出栈时也是栈顶指针移动，将栈空间中与a关联的那4个字节空间释放，这个动作也是自动的，不需要人为干预。<strong>所以我们在写代码的时候，一定不要从被调函数返回一个局部变量的地址给主调函数，因为在函数执行完后局部变量就释放了，这个地址里面的内容有可能被新的内容填充。这时如果你在主调函数里面使用它，就很有可能造成数据错误。</strong></p>
 <p>但是上面的例子来说，不管是<code>toStr()</code>还是<code>toStrArr()</code>，似乎返回的都是一个局部变量的地址，为什么<code>toStr()</code>可以正常返回而<code>toStrArr()</code>无法正常返回呢？原因是：</p>
 <p>第一种表达式，指针s是局部变量，他的作用域是函数toStr内。它将其指向的地址返回，返回之后s即被销毁，庆幸s指向的地址被返回了回来。s虽然是局部变量，被分配到了栈空间，作用域是函数内部，但是它指向的内容是<code>173y267846394</code>,这是一个常量，被分配在程序的常量区，直到整个程序结束才被销毁。</p>
 <p>而第二种，s是一数组，分配到栈空间，”173y267846394”作为数组各个元素被放到数组中，一旦函数退出，栈中这块内存就被释放。虽然返回一个地址，可是已经失去它的意义了。所以这里得不到结果。</p>
@@ -480,6 +480,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Django</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C语言</a>
               </li>
              
@@ -488,7 +492,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Django</a>
+                <a href="javascript:void(0)" class="js-tag color1">nginx</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -500,15 +504,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">nginx</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
