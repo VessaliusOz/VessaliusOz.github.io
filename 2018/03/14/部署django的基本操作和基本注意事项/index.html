@@ -6,18 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Vessalius的博客</title>
+  <title>部署django的基本操作和基本注意事项 | Vessalius的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="h3,h4{ 			text-align: center; 		} 		#main{ 			width: 350px; 			height: 100px; 			border: 1px solid #000; 			margin: 0 auto; 		} 		#main .box{ 			width: 100px; 			height: 100px; 			margin-le">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Vessalius的博客">
-<meta property="og:url" content="http://yoursite.com/assets/demo/hack_demo.html">
+  <meta name="description" content="概述这篇文章主要用来记录在使用django-nginx-uwsgi部署项目的时候遇到的一些问题，虽然没有什么技术难度，但是每次部署的时候都会要用一遍，时间长了就会忘了，又要重新去网上搜，非常浪费时间，所以就在这篇文章里把遇到的问题都集中一下，方便以后的查阅，节约时间。">
+<meta name="keywords" content="django,nginx,uwsgi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="部署django的基本操作和基本注意事项">
+<meta property="og:url" content="http://yoursite.com/2018/03/14/部署django的基本操作和基本注意事项/index.html">
 <meta property="og:site_name" content="Vessalius的博客">
-<meta property="og:description" content="h3,h4{ 			text-align: center; 		} 		#main{ 			width: 350px; 			height: 100px; 			border: 1px solid #000; 			margin: 0 auto; 		} 		#main .box{ 			width: 100px; 			height: 100px; 			margin-le">
-<meta property="og:updated_time" content="2017-07-28T03:51:08.000Z">
+<meta property="og:description" content="概述这篇文章主要用来记录在使用django-nginx-uwsgi部署项目的时候遇到的一些问题，虽然没有什么技术难度，但是每次部署的时候都会要用一遍，时间长了就会忘了，又要重新去网上搜，非常浪费时间，所以就在这篇文章里把遇到的问题都集中一下，方便以后的查阅，节约时间。">
+<meta property="og:updated_time" content="2018-03-15T13:48:42.532Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vessalius的博客">
-<meta name="twitter:description" content="h3,h4{ 			text-align: center; 		} 		#main{ 			width: 350px; 			height: 100px; 			border: 1px solid #000; 			margin: 0 auto; 		} 		#main .box{ 			width: 100px; 			height: 100px; 			margin-le">
+<meta name="twitter:title" content="部署django的基本操作和基本注意事项">
+<meta name="twitter:description" content="概述这篇文章主要用来记录在使用django-nginx-uwsgi部署项目的时候遇到的一些问题，虽然没有什么技术难度，但是每次部署的时候都会要用一遍，时间长了就会忘了，又要重新去网上搜，非常浪费时间，所以就在这篇文章里把遇到的问题都集中一下，方便以后的查阅，节约时间。">
   
     <link rel="alternative" href="/atom.xml" title="Vessalius的博客" type="application/atom+xml">
   
@@ -151,58 +152,69 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="page-" class="article article-type-page " itemscope itemprop="blogPost">
+            <article id="post-部署django的基本操作和基本注意事项" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      部署django的基本操作和基本注意事项
+    </h1>
+  
+
+        
+        <a href="/2018/03/14/部署django的基本操作和基本注意事项/" class="archive-article-date">
+  	<time datetime="2018-03-14T15:05:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-03-14</time>
+</a>
+        
+      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title></title>
-	<style type="text/css">
-		h3,h4{
-			text-align: center;
-		}
-		#main{
-			width: 350px;
-			height: 100px;
-			border: 1px solid #000;
-			margin: 0 auto;
-		}
-		#main .box{
-			width: 100px;
-			height: 100px;
-			margin-left: 10px;
-			position: relative;
-			float: left;
-			background: #333;
-			color:#ddd;
-		}
-		#main .task1:hover{
-			z-index: 999;
-		}
-		#main .task2:hover{
-			z-index: 999;
-			background: #999;
-		}
-		#main .task3:hover{
-			z-index: 999;
-			background: #333;
-		}
-	</style>
-</head>
-<body>
-	<h3>三个background为#333的box</h3>
-	<h4>- 请在IE6，IE7中触发hover -</h4>
-	<div id="main">
-		<div class="box task1">box1 - 未设置backgorund</div>
-		<div class="box task2">box2 - background: #999</div>
-		<div class="box task3">box3 - background: #333</div>
-	</div>
-</body>
-</html>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>这篇文章主要用来记录在使用<code>django-nginx-uwsgi</code>部署项目的时候遇到的一些问题，虽然没有什么技术难度，但是每次部署的时候都会要用一遍，时间长了就会忘了，又要重新去网上搜，非常浪费时间，所以就在这篇文章里把遇到的问题都集中一下，方便以后的查阅，节约时间。</p>
+<a id="more"></a>
+<h3 id="UWSGI"><a href="#UWSGI" class="headerlink" title="UWSGI"></a>UWSGI</h3><p>uwsgi 主要的问题在于启动和停止，以及更新了项目文件之后的操作.<code>Django</code>的官网也给出了uwsgi的配置方法，详见👉<a href="https://docs.djangoproject.com/en/1.11/howto/deployment/wsgi/uwsgi/" target="_blank" rel="noopener">这里</a></p>
+<h4 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h4><p>我们在项目根目录下新建一个名为<code>uwsgi.ini</code>的文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[uwsgi]</span><br><span class="line">chdir=/root/weClass-env/WeClass-demo/</span><br><span class="line">socket = 127.0.0.1:8888</span><br><span class="line">module = WeClass.wsgi</span><br><span class="line">process = 2</span><br><span class="line">thread = 4</span><br><span class="line">demonize =/root/weClass-env/WeClass-demo/uwsgi.ini</span><br></pre></td></tr></table></figure>
+<p>基本的部署只要这个就够了，这些配置的选项非常的易懂，在这里就不做过多的解释了。</p>
+<h4 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h4><p>直接在命令行运行:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nohup uwsgi --ini uwsgi.ini &amp;</span><br></pre></td></tr></table></figure>
+<p>就好了，这里需要使用<code>nohup</code>命令，因为我们的<code>uwsgi</code>服务需要在服务器的后台运行，不然当你退出与服务器的会话窗口的时候，<code>uwsgi</code>的进程就会退出了。</p>
+<h4 id="重启服务"><a href="#重启服务" class="headerlink" title="重启服务"></a>重启服务</h4><p>直接在命令行里面运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$killall -9 uwsgi</span><br><span class="line">$nohup uwsgi --ini uwsgi.ini &amp;</span><br></pre></td></tr></table></figure>
+<p>这两条命令就可以了，但是第一条的关闭命令太粗暴了，你也可以先列出所有的<code>uwsgi</code>进程，然后再通过<code>kill</code>关闭相应的某个<code>uwsgi</code>进程就好了。</p>
+<h3 id="NGINX"><a href="#NGINX" class="headerlink" title="NGINX"></a>NGINX</h3><h4 id="配置文件-1"><a href="#配置文件-1" class="headerlink" title="配置文件"></a>配置文件</h4><p>关于<code>nginx</code>的配置稍微比<code>uwsgi</code>的要复杂一些,基本的的配置信息如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">user  root;</span><br><span class="line">worker_processes  4;</span><br><span class="line"></span><br><span class="line">#error_log  logs/error.log;</span><br><span class="line">#error_log  logs/error.log  notice;</span><br><span class="line">#error_log  logs/error.log  info;</span><br><span class="line"></span><br><span class="line">#pid        logs/nginx.pid;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">    accept_mutex on;</span><br><span class="line">    multi_accept on;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    log_format  main  &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;</span><br><span class="line">                      &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;</span><br><span class="line">                      &apos;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&apos;;</span><br><span class="line"></span><br><span class="line">    #access_log  logs/access.log  main;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    #tcp_nopush     on;</span><br><span class="line"></span><br><span class="line">    #keepalive_timeout  0;</span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line"></span><br><span class="line">    gzip  on;  # 压缩文件</span><br><span class="line">    gzip_comp_level 9;</span><br><span class="line">    gzip_buffers 4 32k;</span><br><span class="line">    gzip_min_length 0;</span><br><span class="line">    gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript image/jpeg image/gif image/png;</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line">	# http server</span><br><span class="line">    server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  xxx;</span><br><span class="line">	root /root/weClass-env/WeClass-demo/;</span><br><span class="line"></span><br><span class="line">        #charset koi8-r;</span><br><span class="line"></span><br><span class="line">        access_log  logs/host.access.log  main;</span><br><span class="line">        error_log logs/host.error.log;</span><br><span class="line"></span><br><span class="line">	location /  &#123;</span><br><span class="line">		include /usr/local/nginx/conf/uwsgi_params;</span><br><span class="line">		uwsgi_pass 127.0.0.1:8888;</span><br><span class="line">		include /usr/local/nginx/conf/mime.types;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	location /static/ &#123;</span><br><span class="line">		alias /root/weClass-env/WeClass-demo/static/;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">   # HTTPS server</span><br><span class="line">       server &#123;</span><br><span class="line">        listen       443 ssl;</span><br><span class="line">       server_name  sms.api.bz;</span><br><span class="line"></span><br><span class="line">	root /root/weClass-env/WeClass-demo/;</span><br><span class="line"></span><br><span class="line">	ssl on;</span><br><span class="line">	#  证书所在路径</span><br><span class="line">   ssl_certificate     /root/https_file/api.bz.crt;</span><br><span class="line">   ssl_certificate_key  /root/https_file/api.bz_nopass.key;</span><br><span class="line"></span><br><span class="line">	location /  &#123;</span><br><span class="line">                include /usr/local/nginx/conf/uwsgi_params;</span><br><span class="line">                uwsgi_pass 127.0.0.1:8888;</span><br><span class="line">                include /usr/local/nginx/conf/mime.types;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">	location /static/ &#123;</span><br><span class="line">                root /root/weClass-env/WeClass-demo/;</span><br><span class="line">                include /usr/local/nginx/conf/mime.types;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个基本是配置文件的模板。至于<code>location</code>的使用用法，可以自己去看<code>nginx</code>的官网哦🤗，非常的详细。</p>
+<h4 id="启动命令"><a href="#启动命令" class="headerlink" title="启动命令"></a>启动命令</h4><p>我们启动nginx的常用命令是,路径根据自己的实际情况来:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# /usr/local/nginx/sbin/nginx -t</span><br><span class="line">nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok</span><br><span class="line">nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>这个时候可能会遇到端口被占用的问题，比如会有以下输出:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Starting nginx: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</span><br><span class="line"></span><br><span class="line">nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</span><br><span class="line">nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</span><br><span class="line">nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</span><br><span class="line">nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)</span><br><span class="line">nginx: [emerg] still could not bind()</span><br></pre></td></tr></table></figure>
+<p>有时443端口也会变成这个样子，所以我们应该先把占用相关端口的进程关闭掉,先使用以下命令查看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$lsof -i:80</span><br><span class="line">$lsof -i:443</span><br></pre></td></tr></table></figure>
+<p>得到进程的PID,然后使用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -9  &lt;pid-number&gt;</span><br></pre></td></tr></table></figure>
+<p>再重新启动<code>nginx</code>就好啦。</p>
+<h4 id="NGINX的SSL"><a href="#NGINX的SSL" class="headerlink" title="NGINX的SSL"></a>NGINX的SSL</h4><p>有时候我们在编译<code>NGINX</code>的时候，可能会出现这样的错误</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx: [emerg] the &quot;ssl&quot; parameter requires ngx_http_ssl_module in /usr/local/nginx/conf/nginx.conf:</span><br></pre></td></tr></table></figure>
+<p>原因是，nginx缺少http_ssl_module模块，我们应该在编译安装的时候带上<code>--with-http_ssl_module</code>配置就行了，但是现在的情况是我的nginx已经安装过了，怎么添加模块，其实也很简单，往下看： 做个说明：我的nginx的安装目录是/usr/local/nginx这个目录，我的源码包也还保留在/usr/local/src/nginx下。</p>
+<p>1.查看nginx原有的模块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/nginx/sbin/nginx -V</span><br></pre></td></tr></table></figure>
+<p>输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">configure arguments: --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_gzip_static_module</span><br></pre></td></tr></table></figure>
+<p>2.进入<code>nginx</code>的源码包下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_gzip_static_module --with-http_ssl_module</span><br></pre></td></tr></table></figure>
+<p>运行上面的命令即可，等配置完</p>
+<p>3.等配置完后运行<code>make</code>, 这里不要进行<code>make install</code>，否则就是覆盖安装.</p>
+<p>4.备份原有已安装好的nginx<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx.bak</span><br></pre></td></tr></table></figure></p>
+<p>5.将刚刚编译好的nginx覆盖掉原有的nginx（这个时候nginx要停止状态）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp ./objs/nginx /usr/local/nginx/sbin/</span><br></pre></td></tr></table></figure></p>
+<p>6.启动nginx，仍可以通过命令查看是否已经加入成功:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/nginx/sbin/nginx -V</span><br></pre></td></tr></table></figure></p>
+<h4 id="HTTPS和HTTP共存-补充"><a href="#HTTPS和HTTP共存-补充" class="headerlink" title="HTTPS和HTTP共存(补充)"></a>HTTPS和HTTP共存(补充)</h4><p>HTTP和HTTPS在<code>nginx</code>是可以配在一起的，像下面这样，把<code>ssl on</code>去掉，ssl写在443端口后面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">            listen 80 default backlog=2048;</span><br><span class="line">            listen 443 ssl;</span><br><span class="line">            server_name wosign.com;</span><br><span class="line">            root /var/www/html;</span><br><span class="line">  </span><br><span class="line">            ssl_certificate /usr/local/Tengine/sslcrt/ wosign.com.crt;</span><br><span class="line">            ssl_certificate_key /usr/local/Tengine/sslcrt/ wosign.com .Key;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>这样路由就只用写一遍了。</p>
+<h3 id="emmmmmm"><a href="#emmmmmm" class="headerlink" title="emmmmmm"></a>emmmmmm</h3><p>JJYY:  不能在这种重复的事情上浪费时间.</p>
+
       
 
       
@@ -210,6 +222,25 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">nginx</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">uwsgi</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -260,7 +291,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/assets/demo/hack_demo.html" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/03/14/部署django的基本操作和基本注意事项/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -272,6 +303,16 @@
 </article>
 
   
+<nav id="article-nav">
+  
+  
+    <a href="/2018/03/08/c-and-RAM/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">C语言和内存</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -322,7 +363,7 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
