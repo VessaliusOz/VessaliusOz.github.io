@@ -6,17 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2017 | Vessalius的博客</title>
+  <title>django中session机制的实现 | Vessalius的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="电子科技大学 网络工程">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Vessalius的博客">
-<meta property="og:url" content="http://yoursite.com/archives/2017/index.html">
+  <meta name="description" content="概述感觉django的认证系统是一个功能非常强大的东西，提供了非常便捷的功能，但是实际的运用场景下，在某些程度上还是有所欠缺的。因为根据我实习的经历，很多的项目都是需要定制后端的管理站点的，所以最近准备开始学习看django的源码，以备不时之需。 自己主要感兴趣的地方一个是Django的认证系统，还有一个就是Django的ORM系统，所以主要会研究这两个系统的源码(强行立一个flag👀,希望自己">
+<meta name="keywords" content="django,源码分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="django中session机制的实现">
+<meta property="og:url" content="http://yoursite.com/2018/03/22/django-auth-system/index.html">
 <meta property="og:site_name" content="Vessalius的博客">
-<meta property="og:description" content="电子科技大学 网络工程">
+<meta property="og:description" content="概述感觉django的认证系统是一个功能非常强大的东西，提供了非常便捷的功能，但是实际的运用场景下，在某些程度上还是有所欠缺的。因为根据我实习的经历，很多的项目都是需要定制后端的管理站点的，所以最近准备开始学习看django的源码，以备不时之需。 自己主要感兴趣的地方一个是Django的认证系统，还有一个就是Django的ORM系统，所以主要会研究这两个系统的源码(强行立一个flag👀,希望自己">
+<meta property="og:image" content="http://yoursite.com/assets/blogImg/cookie2.png">
+<meta property="og:image" content="http://yoursite.com/assets/blogImg/session.png">
+<meta property="og:updated_time" content="2018-04-06T09:56:11.521Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vessalius的博客">
-<meta name="twitter:description" content="电子科技大学 网络工程">
+<meta name="twitter:title" content="django中session机制的实现">
+<meta name="twitter:description" content="概述感觉django的认证系统是一个功能非常强大的东西，提供了非常便捷的功能，但是实际的运用场景下，在某些程度上还是有所欠缺的。因为根据我实习的经历，很多的项目都是需要定制后端的管理站点的，所以最近准备开始学习看django的源码，以备不时之需。 自己主要感兴趣的地方一个是Django的认证系统，还有一个就是Django的ORM系统，所以主要会研究这两个系统的源码(强行立一个flag👀,希望自己">
+<meta name="twitter:image" content="http://yoursite.com/assets/blogImg/cookie2.png">
   
     <link rel="alternative" href="/atom.xml" title="Vessalius的博客" type="application/atom+xml">
   
@@ -150,372 +155,198 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-django-auth-system" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      django中session机制的实现
+    </h1>
+  
+
+        
+        <a href="/2018/03/22/django-auth-system/" class="archive-article-date">
+  	<time datetime="2018-03-22T14:17:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-03-22</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>感觉django的认证系统是一个功能非常强大的东西，提供了非常便捷的功能，但是实际的运用场景下，在某些程度上还是有所欠缺的。因为根据我实习的经历，很多的项目都是需要定制后端的管理站点的，所以最近准备开始学习看<code>django</code>的源码，以备不时之需。</p>
+<p>自己主要感兴趣的地方一个是<code>Django</code>的认证系统，还有一个就是<code>Django</code>的ORM系统，所以主要会研究这两个系统的源码(强行立一个flag👀,希望自己能坚持下去🤨)。同时在研究源码的时候，会把相对应的web development中的一些关键问题做一些总结，比如今天要说的<code>session</code>机制等等。<br><a id="more"></a></p>
+<h2 id="session和cookie"><a href="#session和cookie" class="headerlink" title="session和cookie"></a>session和cookie</h2><h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>cookie主要分为两类，会话cookie和持久cookie，其中会话cookie在用户退出浏览器的时候，就被删除了。而持久cookie的生存周期更长一些，它们会被存储在硬盘上。通常会用持久cookie维护某个用户会周期性访问的站点的配置文件和登录名。而会话cookie和持久cookie的唯一区别就在于过期时间。如果设置了Discard参数或者没有设置Expires或Max-Age参数来说明扩展的过期时间，这个cookie就是一个会话cookie。</p>
+<h3 id="cookie的设置过程"><a href="#cookie的设置过程" class="headerlink" title="cookie的设置过程"></a>cookie的设置过程</h3><p>cookie的设置过程:</p>
+<ol>
+<li>客户端第一次请求某个站点</li>
+<li>服务器返回的HTTP头部中包含<code>Set-cookie</code>或者<code>Set-Cookie2</code>返回给客户端一些特殊的键值对(这些键值对通常用来标识用户的唯一性)。这些键值对是服务器为了进行跟踪而产生的独特的识别码。(也可以通过url来传输)</li>
+<li>之后客户端的每次请求都会带上<code>Cookie</code>字段，他的值就是用来唯一标识自己身份的值，例如sessionid=xxx等等。</li>
+</ol>
+<p><img src="/assets/blogImg/cookie2.png" alt="流程图"></p>
+<h3 id="session"><a href="#session" class="headerlink" title="session"></a>session</h3><p>session，中文经常翻译为会话，其本来的含义是指有始有终的一系列动作/消息，比如打电话是从拿起电话拨号到挂断电话这中间的一系列过程可以称之为一个session。然而当session一词与网络协议相关联时，它又往往隐含了“面向连接”和/或“保持状态”这样两个含义。</p>
+<p>session在Web开发环境下的语义又有了新的扩展，它的含义是指一类用来在客户端与服务器端之间保持状态的解决方案。有时候Session也用来指这种解决方案的存储结构。</p>
+<p>session机制是一种服务器端的机制，服务器使用一种类似于散列表的结构(也可能就是使用散列表)来保存信息。</p>
+<p>但程序需要为某个客户端的请求创建一个session的时候，服务器首先检查这个客户端的请求里是否包含了一个session标识－称为session id，如果已经包含一个session id则说明以前已经为此客户创建过session，服务器就按照session id把这个session检索出来使用(如果检索不到，可能会新建一个，这种情况可能出现在服务端已经删除了该用户对应的session对象，但用户人为地在请求的URL后面附加上一个JSESSION的参数)。如果客户请求不包含session id，则为此客户创建一个session并且同时生成一个与此session相关联的session id，这个session id将在本次响应中返回给客户端保存。</p>
+<p>session机制本身并不复杂，然而其实现和配置上的灵活性却使得具体情况复杂多变。这也要求我们不能把仅仅某一次的经验或者某一个浏览器，服务器的经验当作普遍适用的。</p>
+<p><img src="/assets/blogImg/session.png" alt="session的原理图"></p>
+<h3 id="cookie和session的区别与联"><a href="#cookie和session的区别与联" class="headerlink" title="cookie和session的区别与联"></a>cookie和session的区别与联</h3><p>session和cookie的目的相同，都是为了克服http协议无状态的缺陷,用来维护客户端和服务端之间的特异的状态。但是session通常存储在服务端，而cookie通常存储在客户端(浏览器)。session通过cookie，在客户端保存session id，而将用户的其他会话消息保存在服务端的session对象中，与此相对的，cookie需要将所有信息都保存在客户端。因此cookie存在着一定的安全隐患，例如本地cookie中保存的用户名密码被破译，或cookie被其他网站收集（例如：1. appA主动设置域B cookie，让域B cookie获取；2. XSS，在appA上通过javascript获取document.cookie，并传递给自己的appB）。</p>
+<h2 id="Django中session机制的实现"><a href="#Django中session机制的实现" class="headerlink" title="Django中session机制的实现"></a>Django中session机制的实现</h2><h3 id="session的存储"><a href="#session的存储" class="headerlink" title="session的存储"></a>session的存储</h3><p>Django的session一般存储在数据库中。存储的位置是数据表<code>django_session</code>中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sqlite&gt; .schema django_session</span><br><span class="line">CREATE TABLE IF NOT EXISTS &quot;django_session&quot; (&quot;session_key&quot; varchar(40) NOT NULL PRIMARY KEY, &quot;session_data&quot; text NOT NULL, &quot;expire_date&quot; datetime NOT NULL);</span><br><span class="line">CREATE INDEX &quot;django_session_expire_date_a5c62663&quot; ON &quot;django_session&quot; (&quot;expire_date&quot;);</span><br></pre></td></tr></table></figure>
+<p><code>django_session</code>表中共有三个字段:</p>
+<ol>
+<li><code>session_key</code>, 这个就是上文所说的需要由服务器分发的存储到浏览器cookie中的session_id</li>
+<li><code>session_data</code>, 这个是存储的会话数据</li>
+<li><code>expire_date</code>, 过期时间</li>
+</ol>
+<p>下面是<code>session_data</code>的加密方式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django.contrib.sessions.backend</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_hash</span><span class="params">(self, value)</span>:</span></span><br><span class="line">    key_salt = <span class="string">"django.contrib.sessions"</span> + self.__class__.__name__</span><br><span class="line">    <span class="keyword">return</span> salted_hmac(key_salt, value).hexdigest()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">encode</span><span class="params">(self, session_dict)</span>:</span></span><br><span class="line">    <span class="string">"Return the given session dictionary serialized and encoded as a string."</span></span><br><span class="line">    serialized = self.serializer().dumps(session_dict)</span><br><span class="line">    <span class="comment"># 假如随机值</span></span><br><span class="line">    hash = self._hash(serialized)</span><br><span class="line">    <span class="comment"># 拼接字符串"随机值:序列化数据",然后用base64加密</span></span><br><span class="line">    <span class="keyword">return</span> base64.b64encode(hash.encode() + <span class="string">b":"</span> + serialized).decode(<span class="string">'ascii'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode</span><span class="params">(self, session_data)</span>:</span></span><br><span class="line">    encoded_data = base64.b64decode(force_bytes(session_data))</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># could produce ValueError if there is no ':'</span></span><br><span class="line">        hash, serialized = encoded_data.split(<span class="string">b':'</span>, <span class="number">1</span>)</span><br><span class="line">        expected_hash = self._hash(serialized)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> constant_time_compare(hash.decode(), expected_hash):</span><br><span class="line">            <span class="keyword">raise</span> SuspiciousSession(<span class="string">"Session data corrupted"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> self.serializer().loads(serialized)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="comment"># ValueError, SuspiciousOperation, unpickling exceptions. If any of</span></span><br><span class="line">        <span class="comment"># these happen, just return an empty dictionary (an empty session).</span></span><br><span class="line">        <span class="keyword">if</span> isinstance(e, SuspiciousOperation):</span><br><span class="line">            logger = logging.getLogger(<span class="string">'django.security.%s'</span> % e.__class__.__name__)</span><br><span class="line">            logger.warning(str(e))</span><br><span class="line">        <span class="keyword">return</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>下面是数据库中的一条数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">session_key                       session_data                                                                                                                                                                                                                                                  expire_date               </span><br><span class="line">--------------------------------  --------------------------------------------------------------------------------------------------------------------                                                                                                                                          --------------------------</span><br><span class="line">qa4iva6zqogx9flxqg7fdsi1b2n9nna6  YjExNDQyY2QzN2RiNDJjYzFmNDVhMmFmODgwMzcwNWY0NzA3ZDBmNDp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiIxMjdjZWRiZTUxNzQwZDE2YmExMGJiN2U0ZmI1NGIxYmMyYzQ2YjRhIn0=  2018-04-07 02:33:32.921703</span><br><span class="line">Run Time: real 0.000 user 0.000173 sys 0.000166</span><br></pre></td></tr></table></figure>
+<p>我们可以解析出来<code>sesssion_data</code>里面的信息</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">3</span>]: <span class="keyword">import</span> json, base64</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: session_data = <span class="string">"YjExNDQyY2QzN2RiNDJjYzFmNDVhMmFmODgwMzcwNWY0NzA3ZDBmNDp7</span></span><br><span class="line"><span class="string">   ...: Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRy</span></span><br><span class="line"><span class="string">   ...: aWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiIxMjdj</span></span><br><span class="line"><span class="string">   ...: ZWRiZTUxNzQwZDE2YmExMGJiN2U0ZmI1NGIxYmMyYzQ2YjRhIn0="</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: encoded_data = base64.b64decode(session_data)</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: hash, serialized = encoded_data.split(<span class="string">b":"</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: json.loads(serialized)</span><br><span class="line">Out[<span class="number">7</span>]:</span><br><span class="line">&#123;<span class="string">'_auth_user_backend'</span>: <span class="string">'django.contrib.auth.backends.ModelBackend'</span>,</span><br><span class="line"> <span class="string">'_auth_user_hash'</span>: <span class="string">'127cedbe51740d16ba10bb7e4fb54b1bc2c46b4a'</span>,</span><br><span class="line"> <span class="string">'_auth_user_id'</span>: <span class="string">'2'</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的信息包含了<code>_auth_user_backend</code>, <code>_auth_user_hash</code>, <code>_auth_user_id</code>等信息，这些信息有什么用呢，我们待会再说。</p>
+<h3 id="SessionBase"><a href="#SessionBase" class="headerlink" title="SessionBase"></a>SessionBase</h3><p>SessionBase是所有的不同类型的session class的基类，在SessionBase中实现了一个session对象所具有的大部分功能。比如关于过期时间的处理，如何生成session等功能。但是关于具体session对象的create()，save()，delete()，load()等方法需要在相应的场景中的对应的不同对象(SessionStore)自己去实现。这里session可以存储在数据库中(通常采用的方法),也可以存储在缓存中。在base文件中还定义相应的错误类<code>CreateError</code>和<code>UpdateError</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># in django.contrib.sessions.backend.base</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreateError</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Used internally as a consistent exception type to catch from save (see the</span></span><br><span class="line"><span class="string">    docstring for SessionBase.save() for details).</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UpdateError</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Occurs if Django tries to update a session that was deleted.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SessionBase</span>:</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<h3 id="SessionStore-in-django-contrib-sessions-backend-db"><a href="#SessionStore-in-django-contrib-sessions-backend-db" class="headerlink" title="SessionStore in django.contrib.sessions.backend.db"></a>SessionStore in django.contrib.sessions.backend.db</h3><p>这个类主要用来实现将session对象存储在数据库中。他的源码其实还是很简单的，结合<code>SessionBase</code>对象提供的接口来看，基本上都是可以看懂的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SessionStore</span><span class="params">(SessionBase)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    完成数据库session的存储</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, session_key=None)</span>:</span></span><br><span class="line">        super().__init__(session_key)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_model_class</span><span class="params">(cls)</span>:</span></span><br><span class="line">        <span class="comment"># 避免循环引入，并允许在django.contrib.sessions不在INSTALLED_APPS中时导入SessionStore。</span></span><br><span class="line">        <span class="keyword">from</span> django.contrib.sessions.models <span class="keyword">import</span> Session</span><br><span class="line">        <span class="keyword">return</span> Session</span><br><span class="line"></span><br><span class="line"><span class="meta">    @cached_property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">model</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.get_model_class()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">load</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            s = self.model.objects.get(</span><br><span class="line">                session_key=self.session_key,</span><br><span class="line">                expire_date__gt=timezone.now()</span><br><span class="line">            )</span><br><span class="line">            <span class="keyword">return</span> self.decode(s.session_data)</span><br><span class="line">        <span class="keyword">except</span> (self.model.DoesNotExist, SuspiciousOperation) <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">if</span> isinstance(e, SuspiciousOperation):</span><br><span class="line">                logger = logging.getLogger(<span class="string">'django.security.%s'</span> % e.__class__.__name__)</span><br><span class="line">                logger.warning(str(e))</span><br><span class="line">            self._session_key = <span class="keyword">None</span></span><br><span class="line">            <span class="keyword">return</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exists</span><span class="params">(self, session_key)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.model.objects.filter(session_key=session_key).exists()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">create</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        	  <span class="comment">#这里的 _session_key是在SessionBase定义属性</span></span><br><span class="line">        	  <span class="comment"># _session_key = property(_get_session_key, _set_session_key)</span></span><br><span class="line">            self._session_key = self._get_new_session_key()</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="comment"># 立即存储来保证我们有一个唯一的数据库入口</span></span><br><span class="line">                self.save(must_create=<span class="keyword">True</span>)</span><br><span class="line">            <span class="keyword">except</span> CreateError:</span><br><span class="line">                <span class="comment"># 键不是唯一的，再次尝试</span></span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            self.modified = <span class="keyword">True</span></span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">create_model_instance</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        返回一个新的session model object对象的实例，对象代表了当前session的状态。被用来将session存储到数据库中。</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">return</span> self.model(</span><br><span class="line">            session_key=self._get_or_create_session_key(),</span><br><span class="line">            session_data=self.encode(data),</span><br><span class="line">            expire_date=self.get_expiry_date(),</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">save</span><span class="params">(self, must_create=False)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        将当前session数据存储到数据库中. 如果 'must_create' 为</span></span><br><span class="line"><span class="string">        True，但是存储操作没有创建一个新的实例(和更新一个存在的实例相反)时，将会引发一个database error。</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> self.session_key <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self.create()</span><br><span class="line">        data = self._get_session(no_load=must_create)</span><br><span class="line">        obj = self.create_model_instance(data)</span><br><span class="line">        using = router.db_for_write(self.model, instance=obj)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">with</span> transaction.atomic(using=using):</span><br><span class="line">                obj.save(force_insert=must_create, force_update=<span class="keyword">not</span> must_create, using=using)</span><br><span class="line">        <span class="keyword">except</span> IntegrityError:</span><br><span class="line">            <span class="keyword">if</span> must_create:</span><br><span class="line">                <span class="keyword">raise</span> CreateError</span><br><span class="line">            <span class="keyword">raise</span></span><br><span class="line">        <span class="keyword">except</span> DatabaseError:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> must_create:</span><br><span class="line">                <span class="keyword">raise</span> UpdateError</span><br><span class="line">            <span class="keyword">raise</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(self, session_key=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> session_key <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">if</span> self.session_key <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            session_key = self.session_key</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            self.model.objects.get(session_key=session_key).delete()</span><br><span class="line">        <span class="keyword">except</span> self.model.DoesNotExist:</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear_expired</span><span class="params">(cls)</span>:</span></span><br><span class="line">   </span><br><span class="line">       cls.get_model_class().objects.filter(expire_date__lt=timezone.now()).delete()</span><br></pre></td></tr></table></figure>
+<h4 id="cached-property"><a href="#cached-property" class="headerlink" title="cached_property"></a>cached_property</h4><p>这里倒有一个非常有趣的装饰器<code>cached_property</code>值得我们注意，源码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">cached_property</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">	这个装饰器主要用来将一个带有单个self参数的方法转换成一个缓存在实例的属性，可选的`name`属性允许你将其他方法变成缓存的属性 (e.g.  url = cached_property(get_absolute_url, name='url') )</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, func, name=None)</span>:</span></span><br><span class="line">        self.func = func</span><br><span class="line">        self.__doc__ = getattr(func, <span class="string">'__doc__'</span>)</span><br><span class="line">        self.name = name <span class="keyword">or</span> func.__name__</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, instance, cls=None)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        调用这个函数并将返回值存储在instance.__dict__中，因此实例的后续的属性访问将会返回缓存的值而不是调用cached_property.__get__()</span></span><br><span class="line"><span class="string">		"""</span></span><br><span class="line">        <span class="keyword">if</span> instance <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self</span><br><span class="line">        <span class="comment"># 将属性存储在实例的__dict__中</span></span><br><span class="line">        res = instance.__dict__[self.name] = self.func(instance)</span><br><span class="line">        <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+<p>顾名思义，这个装饰器的主要的作用是把计算之后得到的属性直接写入到实例的<code>__dict__</code>属性中，这样就避免了每次访问都需要计算一次。看下面的例子你就可以一目了然了:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">cached_property</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, func, name=None)</span>:</span></span><br><span class="line">        self.func = func</span><br><span class="line">        self.name = name <span class="keyword">or</span> func.__name__</span><br><span class="line">        self.__doc__ = getattr(func, <span class="string">'__doc__'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, instance, cls=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> instance <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self</span><br><span class="line">        print(instance, cls)</span><br><span class="line">        res = instance.__dict__[self.name] = self.func(instance)</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">my_property</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, func)</span>:</span></span><br><span class="line">        self.func = func</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, instance, cls)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> instance <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self</span><br><span class="line">        print(instance, cls)</span><br><span class="line">        <span class="keyword">return</span> self.func(instance)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>:</span></span><br><span class="line">    birth_date = <span class="number">1997</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @my_property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">age</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> datetime.date.today().year - self.birth_date</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student1</span>:</span></span><br><span class="line">    birth_date = <span class="number">1997</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @cached_property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">age</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> datetime.date.today().year - self.birth_date</span><br></pre></td></tr></table></figure>
+<p>交互的结果如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: student = Student()</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: student.age</span><br><span class="line">&lt;__main__.Student object at <span class="number">0x10cdac748</span>&gt; &lt;<span class="class"><span class="keyword">class</span> '<span class="title">__main__</span>.<span class="title">Student</span>'&gt;</span></span><br><span class="line"><span class="class"><span class="title">Out</span>[2]:</span> <span class="number">21</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: student.age</span><br><span class="line">&lt;__main__.Student object at <span class="number">0x10cdac748</span>&gt; &lt;<span class="class"><span class="keyword">class</span> '<span class="title">__main__</span>.<span class="title">Student</span>'&gt;</span></span><br><span class="line"><span class="class"><span class="title">Out</span>[3]:</span> <span class="number">21</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: student.age</span><br><span class="line">&lt;__main__.Student object at <span class="number">0x10cdac748</span>&gt; &lt;<span class="class"><span class="keyword">class</span> '<span class="title">__main__</span>.<span class="title">Student</span>'&gt;</span></span><br><span class="line"><span class="class"><span class="title">Out</span>[4]:</span> <span class="number">21</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: student1 = Student1()</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: student1.age</span><br><span class="line">&lt;__main__.Student1 object at <span class="number">0x10cd7d208</span>&gt; &lt;<span class="class"><span class="keyword">class</span> '<span class="title">__main__</span>.<span class="title">Student1</span>'&gt;</span></span><br><span class="line"><span class="class"><span class="title">Out</span>[6]:</span> <span class="number">21</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: student1.age</span><br><span class="line">Out[<span class="number">7</span>]: <span class="number">21</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: student1.age</span><br><span class="line">Out[<span class="number">8</span>]: <span class="number">21</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: student.__dict__</span><br><span class="line">Out[<span class="number">9</span>]: &#123;&#125;</span><br><span class="line"></span><br><span class="line">In [<span class="number">10</span>]: student1.__dict__</span><br><span class="line">Out[<span class="number">10</span>]: &#123;<span class="string">'age'</span>: <span class="number">21</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>上面只是总结了<code>session</code>存储在数据库中的方法,其实在django中，<code>session</code>还可以存储在缓存和文件系统中，只要在<code>settings</code>设置不同的<code>session</code>后端就可以了。</p>
+<h3 id="SessionMiddleware"><a href="#SessionMiddleware" class="headerlink" title="SessionMiddleware"></a>SessionMiddleware</h3><p>session是如何在请求中起作用的呢？我们可以来看看<code>SessionMiddleware</code>的内容。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># in django.utils.deprecation</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MiddlewareMixin</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, get_response=None)</span>:</span></span><br><span class="line">        self.get_response = get_response</span><br><span class="line">        super().__init__()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        response = <span class="keyword">None</span></span><br><span class="line">        <span class="keyword">if</span> hasattr(self, <span class="string">'process_request'</span>):</span><br><span class="line">            response = self.process_request(request)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> response:</span><br><span class="line">            response = self.get_response(request)</span><br><span class="line">        <span class="keyword">if</span> hasattr(self, <span class="string">'process_response'</span>):</span><br><span class="line">            response = self.process_response(request, response)</span><br><span class="line">        <span class="keyword">return</span> response</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line"><span class="comment"># in django.contrib.sessions.middleware</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SessionMiddleware</span><span class="params">(MiddlewareMixin)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, get_response=None)</span>:</span></span><br><span class="line">        self.get_response = get_response</span><br><span class="line">        engine = import_module(settings.SESSION_ENGINE)</span><br><span class="line">        self.SessionStore = engine.SessionStore</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        session_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME)</span><br><span class="line">        request.session = self.SessionStore(session_key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_response</span><span class="params">(self, request, response)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        如果request.session被修改了，或者设置是每次都要保存session,将会保存更改并设置会话cookie或者在session被清空的时候删除会话cookie</span></span><br><span class="line"><span class="string">       """</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            accessed = request.session.accessed</span><br><span class="line">            modified = request.session.modified</span><br><span class="line">            empty = request.session.is_empty()</span><br><span class="line">        <span class="keyword">except</span> AttributeError:</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 首先检查我们是否需要删除这个cookie</span></span><br><span class="line">            <span class="comment"># 只有当session为空的时候，才需要删除删除这个session</span></span><br><span class="line">            <span class="keyword">if</span> settings.SESSION_COOKIE_NAME <span class="keyword">in</span> request.COOKIES <span class="keyword">and</span> empty:</span><br><span class="line">                response.delete_cookie(</span><br><span class="line">                    settings.SESSION_COOKIE_NAME,</span><br><span class="line">                    path=settings.SESSION_COOKIE_PATH,</span><br><span class="line">                    domain=settings.SESSION_COOKIE_DOMAIN,</span><br><span class="line">                )</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">if</span> accessed:</span><br><span class="line">                    patch_vary_headers(response, (<span class="string">'Cookie'</span>,))</span><br><span class="line">                <span class="keyword">if</span> (modified <span class="keyword">or</span> settings.SESSION_SAVE_EVERY_REQUEST) <span class="keyword">and</span> <span class="keyword">not</span> empty:</span><br><span class="line">                    <span class="keyword">if</span> request.session.get_expire_at_browser_close():</span><br><span class="line">                        max_age = <span class="keyword">None</span></span><br><span class="line">                        expires = <span class="keyword">None</span></span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        max_age = request.session.get_expiry_age()</span><br><span class="line">                        expires_time = time.time() + max_age</span><br><span class="line">                        expires = cookie_date(expires_time)</span><br><span class="line">                    <span class="comment"># Save the session data and refresh the client cookie.</span></span><br><span class="line">                    <span class="comment"># Skip session save for 500 responses, refs #3881.</span></span><br><span class="line">                    <span class="keyword">if</span> response.status_code != <span class="number">500</span>:</span><br><span class="line">                        <span class="keyword">try</span>:</span><br><span class="line">                            request.session.save()</span><br><span class="line">                        <span class="keyword">except</span> UpdateError:</span><br><span class="line">                            <span class="keyword">raise</span> SuspiciousOperation(</span><br><span class="line">                                <span class="string">"The request's session was deleted before the "</span></span><br><span class="line">                                <span class="string">"request completed. The user may have logged "</span></span><br><span class="line">                                <span class="string">"out in a concurrent request, for example."</span></span><br><span class="line">                            )</span><br><span class="line">                        response.set_cookie(</span><br><span class="line">                            settings.SESSION_COOKIE_NAME,</span><br><span class="line">                            request.session.session_key, max_age=max_age,</span><br><span class="line">                            expires=expires, domain=settings.SESSION_COOKIE_DOMAIN,</span><br><span class="line">                            path=settings.SESSION_COOKIE_PATH,</span><br><span class="line">                            secure=settings.SESSION_COOKIE_SECURE <span class="keyword">or</span> <span class="keyword">None</span>,</span><br><span class="line">                            httponly=settings.SESSION_COOKIE_HTTPONLY <span class="keyword">or</span> <span class="keyword">None</span>,</span><br><span class="line">                        )</span><br><span class="line">        <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+<p>在处理请求的时候，<code>process_request</code>方法会在请求中取出<code>session_key</code>，并把一个新的session对象赋给<code>request.session</code>。在处理响应的时候，首先会检查<code>session</code>是否为空，如果为空，就删除<code>session</code>,然后会检查是持久cookie还是会话cookie,如果是持久cookie，则会在每次响应的时候都更新一次过期时间。其中<code>settings.SESSION_COOKIE_NAME</code>的默认的值就是<code>session_id</code>.</p>
+<h3 id="认证中的session"><a href="#认证中的session" class="headerlink" title="认证中的session"></a>认证中的session</h3><p>我们先来看一下<code>AuthenticationMiddleware</code>中是如何利用<code>session</code>来处理<code>request.user</code>的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#django.contrib.auth.middleware</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_user</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> hasattr(request, <span class="string">'_cached_user'</span>):</span><br><span class="line">        request._cached_user = auth.get_user(request)</span><br><span class="line">    <span class="keyword">return</span> request._cached_user</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AuthenticationMiddleware</span><span class="params">(MiddlewareMixin)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        <span class="keyword">assert</span> hasattr(request, <span class="string">'session'</span>), (</span><br><span class="line">            <span class="string">"The Django authentication middleware requires session middleware "</span></span><br><span class="line">            <span class="string">"to be installed. Edit your MIDDLEWARE%s setting to insert "</span></span><br><span class="line">            <span class="string">"'django.contrib.sessions.middleware.SessionMiddleware' before "</span></span><br><span class="line">            <span class="string">"'django.contrib.auth.middleware.AuthenticationMiddleware'."</span></span><br><span class="line">        ) % (<span class="string">"_CLASSES"</span> <span class="keyword">if</span> settings.MIDDLEWARE <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">else</span> <span class="string">""</span>)</span><br><span class="line">        request.user = SimpleLazyObject(<span class="keyword">lambda</span>: get_user(request))</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line"><span class="comment"># django.contrib.auth.__init__</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_user</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Return the user model instance associated with the given request session.</span></span><br><span class="line"><span class="string">    If no user is retrieved, return an instance of `AnonymousUser`.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">from</span> .models <span class="keyword">import</span> AnonymousUser</span><br><span class="line">    user = <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        user_id = _get_user_session_key(request)</span><br><span class="line">        backend_path = request.session[BACKEND_SESSION_KEY]</span><br><span class="line">    <span class="keyword">except</span> KeyError:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">if</span> backend_path <span class="keyword">in</span> settings.AUTHENTICATION_BACKENDS:</span><br><span class="line">            backend = load_backend(backend_path)</span><br><span class="line">            user = backend.get_user(user_id)</span><br><span class="line">            <span class="comment"># Verify the session</span></span><br><span class="line">            <span class="keyword">if</span> hasattr(user, <span class="string">'get_session_auth_hash'</span>):</span><br><span class="line">                session_hash = request.session.get(HASH_SESSION_KEY)</span><br><span class="line">                session_hash_verified = session_hash <span class="keyword">and</span> constant_time_compare(</span><br><span class="line">                    session_hash,</span><br><span class="line">                    user.get_session_auth_hash()</span><br><span class="line">                )</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> session_hash_verified:</span><br><span class="line">                    request.session.flush()</span><br><span class="line">                    user = <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> user <span class="keyword">or</span> AnonymousUser()</span><br></pre></td></tr></table></figure>
+<p>其中<code>get_user</code>函数会检查session中是否存放了当前用户对应的<code>user_id</code>,如果有，并通过认证检查之后，会通过<code>user_id</code>得到相应的<code>user model</code>，否则，就会返回一个匿名用户的实例。<code>user_id</code>就是通过上文中提到的<code>session_data</code>得到的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">'_auth_user_backend'</span>: <span class="string">'django.contrib.auth.backends.ModelBackend'</span>,</span><br><span class="line"> <span class="string">'_auth_user_hash'</span>: <span class="string">'127cedbe51740d16ba10bb7e4fb54b1bc2c46b4a'</span>,</span><br><span class="line"> <span class="string">'_auth_user_id'</span>: <span class="string">'2'</span>&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/10/从请求到相应django都做了哪些处理/" class="archive-article-date">
-  	<time datetime="2017-12-10T01:47:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/10/从请求到相应django都做了哪些处理/">从请求到响应django都做了哪些处理</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/10/19/在Django中使用Celery/" class="archive-article-date">
-  	<time datetime="2017-10-19T13:01:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-19</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/10/19/在Django中使用Celery/">在Django中使用Celery</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/10/05/requests模拟登录电子科技大学信息门户/" class="archive-article-date">
-  	<time datetime="2017-10-05T09:33:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-05</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/10/05/requests模拟登录电子科技大学信息门户/">requests模拟登录电子科技大学信息门户</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/10/01/九月不是久月/" class="archive-article-date">
-  	<time datetime="2017-10-01T09:33:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-01</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/10/01/九月不是久月/">九月不是久月</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/07/27/Django静态文件处理/" class="archive-article-date">
-  	<time datetime="2017-07-27T04:35:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/07/27/Django静态文件处理/">Django静态文件处理</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/07/21/python使用smtplib库发送邮件/" class="archive-article-date">
-  	<time datetime="2017-07-21T03:06:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/07/21/python使用smtplib库发送邮件/">python使用smtplib库发送邮件</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/07/18/Django拓展内建User模型字段/" class="archive-article-date">
-  	<time datetime="2017-07-18T14:38:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-18</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/07/18/Django拓展内建User模型字段/">Django拓展内建User模型字段</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/07/14/MongoEngine初探/" class="archive-article-date">
-  	<time datetime="2017-07-14T06:30:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/07/14/MongoEngine初探/">MongoEngine初探</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">MongoEngine</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">MongoDB</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">源码分析</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/03/22/django-auth-system/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/05/14/nginx-uwsgi-django部署网站以及关于静态文件的分发等相关问题/" class="archive-article-date">
-  	<time datetime="2017-05-14T15:23:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-05-14</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2018/03/14/部署django的基本操作和基本注意事项/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">部署django的基本操作和基本注意事项</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/05/14/nginx-uwsgi-django部署网站以及关于静态文件的分发等相关问题/">一些关于nginx配置的问题</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">nginx</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
+
+  
 
 
           </div>
@@ -538,8 +369,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
