@@ -6,21 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>django-channels初探 | Vessalius的博客</title>
+  <title>Archives: 2018/7 | Vessalius的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="最近在倒腾django-channels，它刚刚出来的时候，我就倒腾过，但是可能是因为当时太浮躁了，就没有认真的学习下去(此处应该给自己一个耳光)。现在再重新来看的话，觉得它异常的牛逼。。。现在就一边来学习一边总结。">
-<meta name="keywords" content="Django">
-<meta property="og:type" content="article">
-<meta property="og:title" content="django-channels初探">
-<meta property="og:url" content="http://yoursite.com/2018/01/08/django-channels初探/index.html">
+  <meta name="description" content="电子科技大学 网络工程">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vessalius的博客">
+<meta property="og:url" content="http://yoursite.com/archives/2018/07/index.html">
 <meta property="og:site_name" content="Vessalius的博客">
-<meta property="og:description" content="最近在倒腾django-channels，它刚刚出来的时候，我就倒腾过，但是可能是因为当时太浮躁了，就没有认真的学习下去(此处应该给自己一个耳光)。现在再重新来看的话，觉得它异常的牛逼。。。现在就一边来学习一边总结。">
-<meta property="og:image" content="http://yoursite.com/img/django-channels.png">
-<meta property="og:updated_time" content="2018-02-22T13:57:38.044Z">
+<meta property="og:description" content="电子科技大学 网络工程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="django-channels初探">
-<meta name="twitter:description" content="最近在倒腾django-channels，它刚刚出来的时候，我就倒腾过，但是可能是因为当时太浮躁了，就没有认真的学习下去(此处应该给自己一个耳光)。现在再重新来看的话，觉得它异常的牛逼。。。现在就一边来学习一边总结。">
-<meta name="twitter:image" content="http://yoursite.com/img/django-channels.png">
+<meta name="twitter:title" content="Vessalius的博客">
+<meta name="twitter:description" content="电子科技大学 网络工程">
   
     <link rel="alternative" href="/atom.xml" title="Vessalius的博客" type="application/atom+xml">
   
@@ -154,62 +150,36 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-django-channels初探" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      django-channels初探
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2018/07/29/django-queryset-API/" class="archive-article-date">
+  	<time datetime="2018-07-29T02:53:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-29</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2018/07/29/django-queryset-API/">django的查询API</a>
     </h1>
   
 
-        
-        <a href="/2018/01/08/django-channels初探/" class="archive-article-date">
-  	<time datetime="2018-01-08T08:52:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近在倒腾<code>django-channels</code>，它刚刚出来的时候，我就倒腾过，但是可能是因为当时太浮躁了，就没有认真的学习下去(此处应该给自己一个耳光)。现在再重新来看的话，觉得它异常的牛逼。。。现在就一边来学习一边总结。</p>
-<a id="more"></a>
-<h1 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h1><h3 id="传统HTTP"><a href="#传统HTTP" class="headerlink" title="传统HTTP"></a>传统HTTP</h3><p>我们知道，传统的<code>HTTP</code>是无状态协议，它不支持持久的连接(长连接和轮寻不算。)。在<code>HTTP1.0</code>的版本中,<code>HTTP</code>的生命周期是通过<code>Request</code>来界定的，客户端发起一个<code>Request</code>，服务端返回一个<code>Response</code>，一个<code>Request</code>,一个<code>Response</code>,这样，这次<code>HTTP</code>通信就结束了。比如说当你请求一个网页的时候，网页不仅有<code>HTML</code>文档,也有静态文件。那么在<code>HTTP1.0</code>中，你对每一个资源的请求，都会重新建立一个<code>HTTP</code>连接。比如你请求两张图片，就需要建立两次连接，因为每个连接里面只包含了一个<code>Request</code>和<code>Response</code>.</p>
-<p>在<code>HTTP1.1</code>中进行了改进。<code>HTTP</code>头请求里面加入了<code>keep-alive</code>参数，也就是说，在一次<code>HTTP</code>通信中，可以发送多个<code>Request</code>,然后得到多个返回的<code>Response</code>。但是在这一次的通信中，每个<code>Request</code>对应且仅对应一个<code>Response</code>。还是上面的例子，你要请求两张图片，这次虽然有两个<code>Request</code>和<code>Response</code>,你只需要建立一次<code>HTTP</code>连接。</p>
-<p>但是无论是<code>HTTP1.0</code>还是<code>HTTP1.1</code>,一个<code>Request</code>只能有一个<code>Response</code>,而且这个<code>Response</code>是被动的。不能主动发起。</p>
-<h3 id="WebSocket-1"><a href="#WebSocket-1" class="headerlink" title="WebSocket"></a>WebSocket</h3><p><code>WebSocket</code>是基于<code>HTTP</code>的。它借用了<code>HTTP</code>协议完成了<br>一部分握手。它解决了<code>HTTP</code>协议的几个难题。首先它解决了被动性的问题，从<code>WebSocket</code>的名字就可以看出，这是<code>Socket</code>,众所周知，<code>Socket</code>是一个全双工的协议，可以进行双向的通信。而在使用<code>WebSocket</code>之后，服务器就可以主动向客户端推送消息了。</p>
-<p><code>WebSocket</code>相比于’Ajax轮寻’以及<code>long pull长连接</code>而言，效率会高很多，而且也不会造成过多的资源浪费。</p>
-<h1 id="channels"><a href="#channels" class="headerlink" title="channels"></a>channels</h1><h3 id="channels的安装"><a href="#channels的安装" class="headerlink" title="channels的安装"></a>channels的安装</h3><p>emmmmmmm.安装没啥好说的。直接看官网就行了。但是需要注意的是<code>channels</code>支持的<code>django</code>的版本只有<code>1.8.x-1.10.x</code>，所以<code>channels</code>并不支持最新的<code>django2.0</code>。</p>
-<h3 id="基本的概念"><a href="#基本的概念" class="headerlink" title="基本的概念"></a>基本的概念</h3><p><code>django-channels</code>中有几个基本的概念需要先说一下:</p>
-<h4 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h4><p><code>channel</code>是系统的核心，它是一个有序的，先进先出的队列，里面的消息有过期时间，而且最多一次只能传递给一个<code>listener</code>。你可以把<code>channel</code>想象为一个任务队列，<code>message</code>会被<code>producers</code>送到<code>channel</code>，然后只会被交给许多监听这个<code>channel</code>的<code>consumer</code>中的一个。其中<code>message</code>(可以被想象成是<code>view</code>里的<code>request</code>)必须是一个可序列化的对象，并且会有长度的限制。</p>
-<p><code>channel</code>使<code>Django</code>运行在<code>worker</code>模式，它会监听所有被部署了<code>consumer</code>的<code>channel</code>,当一个<code>message</code>到来的时候，它就会调用相应的<code>consumer</code>,所以，<code>channels</code>使得<code>Django</code>运行了三个不同的服务。</p>
-<ul>
-<li>interface servers<br><code>Django</code>通过它来和外部打交道。它包含了一个<code>WSGI服务</code>和一个独立的<code>WebSocket</code>服务。</li>
-<li>the channel backend<br>主要负责传递<code>message</code></li>
-<li>the workers<br>监听相关的<code>channel</code>,当消息来的时候，运行相应的<code>comsumer</code>。</li>
-</ul>
-<p><code>channels</code>处理的流程图<br><img src="/img/django-channels.png" alt=""></p>
-<h4 id="channel-types"><a href="#channel-types" class="headerlink" title="channel types"></a>channel types</h4><p>主要有两种<code>channel</code>:</p>
-<p>一种(大多数)是用来向<code>consumer</code>分发工作:当一个<code>message</code>被分发到一个<code>channel</code>时，任何一个<code>worker</code>可以使用<code>consumer</code>来处理<code>message</code>.</p>
-<p>第二种主要用来回复消息。因为只有一个<code>interface server</code>在监听所有的<code>channel</code>，所以每个<code>reply channel</code>都是被单独命名的而且必须被路由回<code>interface server</code>。因此<code>response channel</code>必须把他们的<code>message</code>发送给他们正在监听的<code>channel server</code>。这样的话，每个<code>response channel</code>的命名都包含了<code>channel</code>的名字加上随机字符串。比如<code>http.response</code>的<code>reply_channel</code>的名字可能为<code>http.response!f5G3fE21f</code>。(其实写了这么多就是为了说明如何区分通过同一个<code>channel</code>连接后不同的<code>reply_channel</code>)</p>
-<h4 id="Groups"><a href="#Groups" class="headerlink" title="Groups"></a>Groups</h4><p>组这个名词我觉得大家应该都不陌生。<code>channel</code>可以通过<code>Group</code>来达到组播的效果。为了在连接建立或者关闭的时候将一个连接从组中添加或者移除，我们一般会这样写:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># Connected to websocket.connect</span><br><span class="line">def ws_connect(message):</span><br><span class="line">    # Add to reader group</span><br><span class="line">    Group(&quot;liveblog&quot;).add(message.reply_channel)</span><br><span class="line">    # Accept the connection request</span><br><span class="line">    message.reply_channel.send(&#123;&quot;accept&quot;: True&#125;)</span><br><span class="line"></span><br><span class="line"># Connected to websocket.disconnect</span><br><span class="line">def ws_disconnect(message):</span><br><span class="line">    # Remove from reader group on clean disconnect</span><br><span class="line">    Group(&quot;liveblog&quot;).discard(message.reply_channel)</span><br></pre></td></tr></table></figure></p>
-<p>今天就先写到这儿吧，感觉这样写博客其实挺没意思的，没有一点思考的痕迹。还是等在使用的时候，记录一些好玩的，值得记录的东西吧。</p>
-<hr>
-<h3 id="路由设置"><a href="#路由设置" class="headerlink" title="路由设置"></a>路由设置</h3><p>在学习的时候有个地方当时没有想明白。。。感觉自己想得有点复杂了。在我看来，如果提供一个完整的<code>WebSocket</code>的服务，至少需要三个<code>channel</code>，分别对应<code>websocket.connect</code>,<code>websocket.receive</code>,<code>websocket.disconnect</code>以及相关的<code>consumer</code>，所以当时脑袋抽了，如果一个<code>app</code>里面需要提供多个独立的<code>websocket</code>的服务，那怎么提供呢?不可能共用三个<code>channel</code>啊？后来才发现是自己有点蠢。。。这个其实和<code>Django</code>里面的<code>url</code>的设置几乎是一样的。有多个独立的<code>WebSocket</code>服务的<code>url</code>应该是这样设置的.我觉得这样写很清晰而且一目了然。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">from channels.routing import route, include</span><br><span class="line">from chartroom.consumers import *</span><br><span class="line"></span><br><span class="line"># 值得注意的是，这里的正则表达式包含了第一个&quot;/&quot;</span><br><span class="line">chat_routings = [</span><br><span class="line">    route(&apos;websocket.receive&apos;, ws_room_message, path=r&apos;^/(?P&lt;room_name&gt;\w+)/$&apos;),</span><br><span class="line">    route(&apos;websocket.connect&apos;, ws_room_connect, path=r&apos;^/(?P&lt;room_name&gt;\w+)/$&apos;),</span><br><span class="line">    route(&apos;websocket.disconnect&apos;, ws_room_disconnect, path=r&apos;^/(?P&lt;room_name&gt;\w+)/$&apos;),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">normal_routings = [</span><br><span class="line">    route(&apos;websocket.receive&apos;, ws_normal_message),</span><br><span class="line">    route(&apos;websocket.connect&apos;, ws_normal_connect),</span><br><span class="line">    route(&apos;websocket.disconnect&apos;, ws_normal_disconnect),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">channel_routing = [</span><br><span class="line">    include(chat_routings, path=r&apos;/chat/&apos;),</span><br><span class="line">    # 同样，和Django一样，你也可以传递参数给包含的url,例如把prex传递给chat_routings</span><br><span class="line">    include(chat_routings, path=r&apos;^/(?P&lt;prex&gt;\w+)/&apos;),</span><br><span class="line">    include(normal_routings),</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
-<h3 id="和model联系起来"><a href="#和model联系起来" class="headerlink" title="和model联系起来"></a>和model联系起来</h3><p>还有一个我觉得很有趣的做法，是官网上面给出来的例子，可以参考一下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"># In models.py</span><br><span class="line">class ChatMessage(models.Model):</span><br><span class="line">    message = models.TextField(verbose_name=&apos;room_message&apos;, default=None, null=True)</span><br><span class="line">    room = models.CharField(max_length=20, null=True, default=None)</span><br><span class="line"></span><br><span class="line"># In consumers.py</span><br><span class="line">from channels import Channel, Group</span><br><span class="line">from channels.sessions import channel_session</span><br><span class="line">from .models import ChatMessage</span><br><span class="line"></span><br><span class="line"># Connected to chat-messages</span><br><span class="line">def msg_consumer(message):</span><br><span class="line">    # Save to model</span><br><span class="line">    room = message.content[&apos;room&apos;]</span><br><span class="line">    ChatMessage.objects.create(</span><br><span class="line">        room=room,</span><br><span class="line">        message=message.content[&apos;message&apos;],</span><br><span class="line">    )</span><br><span class="line">    # Broadcast to listening sockets</span><br><span class="line">    Group(&quot;chat-%s&quot; % room).send(&#123;</span><br><span class="line">        &quot;text&quot;: message.content[&apos;message&apos;],</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line"># Connected to websocket.connect</span><br><span class="line">@channel_session</span><br><span class="line">def ws_connect(message):</span><br><span class="line">    # Work out room name from path (ignore slashes)</span><br><span class="line">    room = message.content[&apos;path&apos;].strip(&quot;/&quot;)</span><br><span class="line">    # Save room in session and add us to the group</span><br><span class="line">    message.channel_session[&apos;room&apos;] = room</span><br><span class="line">    Group(&quot;chat-%s&quot; % room).add(message.reply_channel)</span><br><span class="line">    # Accept the connection request</span><br><span class="line">    message.reply_channel.send(&#123;&quot;accept&quot;: True&#125;)</span><br><span class="line"></span><br><span class="line"># Connected to websocket.receive</span><br><span class="line">@channel_session</span><br><span class="line">def ws_message(message):</span><br><span class="line">    # Stick the message onto the processing queue</span><br><span class="line">    Channel(&quot;chat-messages&quot;).send(&#123;</span><br><span class="line">        &quot;room&quot;: message.channel_session[&apos;room&apos;],</span><br><span class="line">        &quot;message&quot;: message[&apos;text&apos;],</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line"># Connected to websocket.disconnect</span><br><span class="line">@channel_session</span><br><span class="line">def ws_disconnect(message):</span><br><span class="line">    Group(&quot;chat-%s&quot; % message.channel_session[&apos;room&apos;]).discard(message.reply_channel)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># In routings.py</span><br><span class="line">from channels.routing import route</span><br><span class="line">from myapp.consumers import ws_connect, ws_message, ws_disconnect, msg_consumer</span><br><span class="line"></span><br><span class="line">channel_routing = [</span><br><span class="line">    route(&quot;websocket.connect&quot;, ws_connect),</span><br><span class="line">    route(&quot;websocket.receive&quot;, ws_message),</span><br><span class="line">    route(&quot;websocket.disconnect&quot;, ws_disconnect),</span><br><span class="line">    # 这里指明了另外的的一个channel,但是这个channel对用户是不可见的，只是在程序的内部使用</span><br><span class="line">    route(&quot;chat-messages&quot;, msg_consumer),</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
-<p>这里的例子是存储每个聊天室的所发送的消息，并且是一个异步的调用:这里把<code>send</code>事件和<code>model</code>的保存流绑定在一起，在写入数据库之后才把这个<code>message</code>广播到用户所在的组。在<code>ws_message consumer</code>中，我们只是把消息传递到<code>channel(&#39;chat-messages&#39;)</code>后就可以立即继续监听<code>channel(&#39;websocket.receive&#39;)</code>,而把数据的存储和广播(费时的操作)都交给了监听<code>channel(&#39;chat-messages&#39;)</code>的<code>consumer`</code>msg_consumer`中完成。</p>
-<p>而且我们可以在任何地方给<code>channel(&#39;chat-messages&#39;)</code>传递消息，比如<code>view</code>函数、在收到另外的<code>model</code>的<code>post_save</code>的信号后等等。</p>
-<h1 id="else"><a href="#else" class="headerlink" title="else"></a>else</h1><p>今天学到了非常优雅的生成指定长度的随机字符串的方法,不需要使用非常丑陋的<code>+</code>来完成:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import random</span><br><span class="line">import string</span><br><span class="line"></span><br><span class="line">def generate_random_string(n):</span><br><span class="line">    return &apos;&apos;.join(random.sample(string.ascii_letters, n))</span><br></pre></td></tr></table></figure></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -221,115 +191,19 @@
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/01/08/django-channels初探/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2018/02/23/xadmin-plugin-development/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          xadmin插件开发
-        
-      </div>
-    </a>
   
   
-    <a href="/2017/12/10/从请求到相应django都做了哪些处理/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">从请求到响应django都做了哪些处理</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -352,8 +226,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
