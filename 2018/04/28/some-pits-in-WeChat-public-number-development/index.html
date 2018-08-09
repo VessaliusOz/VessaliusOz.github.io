@@ -6,17 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2017/7 | Vessalius的博客</title>
+  <title>微信公众号开发的一点坑 | Vessalius的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="电子科技大学 网络工程">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Vessalius的博客">
-<meta property="og:url" content="http://yoursite.com/archives/2017/07/index.html">
+  <meta name="description" content="这几天在做一个小项目，主要是在微信公众平台下面的开发，在公众号里面开发一个微网站。下面就记录一些在开发过程中遇到的坑。">
+<meta name="keywords" content="django,Wechat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微信公众号开发的一点坑">
+<meta property="og:url" content="http://yoursite.com/2018/04/28/some-pits-in-WeChat-public-number-development/index.html">
 <meta property="og:site_name" content="Vessalius的博客">
-<meta property="og:description" content="电子科技大学 网络工程">
+<meta property="og:description" content="这几天在做一个小项目，主要是在微信公众平台下面的开发，在公众号里面开发一个微网站。下面就记录一些在开发过程中遇到的坑。">
+<meta property="og:updated_time" content="2018-08-09T07:31:20.032Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vessalius的博客">
-<meta name="twitter:description" content="电子科技大学 网络工程">
+<meta name="twitter:title" content="微信公众号开发的一点坑">
+<meta name="twitter:description" content="这几天在做一个小项目，主要是在微信公众平台下面的开发，在公众号里面开发一个微网站。下面就记录一些在开发过程中遇到的坑。">
   
     <link rel="alternative" href="/atom.xml" title="Vessalius的博客" type="application/atom+xml">
   
@@ -150,182 +152,200 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-some-pits-in-WeChat-public-number-development" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      微信公众号开发的一点坑
+    </h1>
+  
+
+        
+        <a href="/2018/04/28/some-pits-in-WeChat-public-number-development/" class="archive-article-date">
+  	<time datetime="2018-04-28T07:02:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-28</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这几天在做一个小项目，主要是在微信公众平台下面的开发，在公众号里面开发一个微网站。下面就记录一些在开发过程中遇到的坑。</p>
+<a id="more"></a>
+<h2 id="用户授权登录"><a href="#用户授权登录" class="headerlink" title="用户授权登录"></a>用户授权登录</h2><p>总的来说，微信给的授权登录的接口还是很清楚的，而且文档也还比较详细，可以凑合着用了。关于授权登录，有几点要说的。</p>
+<h3 id="获取用户信息"><a href="#获取用户信息" class="headerlink" title="获取用户信息"></a>获取用户信息</h3><p>这里是有一点小坑的，首先是获取用户的信息，官网上建议的接口是:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&amp;openid=OPENID&amp;lang=zh_CN</span><br></pre></td></tr></table></figure>
+<p>但是这个得到的用户名地区等信息都是乱码的，解决方法主要如下：</p>
+<p>首先请求这个接口,把后面的<code>lang=zh_CN</code>改成<code>lang=en</code>,因为用英文请求的时候，返回的编码就是<code>UTF-8</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&amp;openid=OPENID&amp;lang=en</span><br></pre></td></tr></table></figure>
+<p>在<code>view</code>里面请求时，我们一般用的是<code>requests</code>，具体代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">user_info_api = config.user_info_api.format(session.web_access_token, user.username)</span><br><span class="line">        resp = requests.get(user_info_api)</span><br><span class="line">        resp.encoding = <span class="string">'utf-8'</span></span><br><span class="line">        data = resp.json()</span><br></pre></td></tr></table></figure>
+<p>这样就可以得到正确编码的用户信息了.</p>
+<p>或者还可以这样:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user_info[&apos;nickname&apos;].encode(&apos;iso-8859-1&apos;).decode(&apos;utf-8&apos;)</span><br></pre></td></tr></table></figure>
+<p>方案是先将接口返回的字符串编码成ISO-8859-1的字节流，然后再以UTF-8解码成字符串。</p>
+<p>所以，我搞不懂这个<code>lang=zh_CN</code>到底有什么意义呢。。。。</p>
+<h4 id="授权登录"><a href="#授权登录" class="headerlink" title="授权登录"></a>授权登录</h4><p>授权登录还是困扰了我一段时间的，不过最后发现当时有问题的地方，还是自己的代码写的有问题。接收授权请求的<code>view</code>代码主要如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">@require_GET</span><br><span class="line">def authorize(request):</span><br><span class="line">    code = request.GET.get(&apos;code&apos;, &apos;&apos;)</span><br><span class="line">    state = request.GET.get(&apos;state&apos;, &apos;&apos;)</span><br><span class="line">    params = dict()</span><br><span class="line">    if state:</span><br><span class="line">        raw_kvPairs = state.split(&apos;,&apos;)</span><br><span class="line">        for pair in raw_kvPairs:</span><br><span class="line">            key, value = pair.split(&apos;=&apos;)</span><br><span class="line">            params[key] = value</span><br><span class="line">    appid = config.APPID</span><br><span class="line">    appsecret = config.APPSECRET</span><br><span class="line">    api = config.web_token_api.format(appid, appsecret, code)</span><br><span class="line"></span><br><span class="line">    user_info = requests.get(api).json()</span><br><span class="line"></span><br><span class="line">    openid = user_info.get(&apos;openid&apos;)</span><br><span class="line">    web_access_token = user_info.get(&apos;access_token&apos;)</span><br><span class="line">    refresh_token = user_info.get(&apos;refresh_token&apos;)</span><br><span class="line">    user, _ = User.objects.get_or_create(username=openid)</span><br><span class="line">    user.save()</span><br><span class="line">    session_token, _ = SessionToken.objects.get_or_create(user=user)</span><br><span class="line">    session_token.web_access_token = web_access_token</span><br><span class="line">    session_token.refresh_token = refresh_token</span><br><span class="line">    session_token.save()</span><br><span class="line">    return HttpResponseRedirect(&apos;/api/auth/set_user_info/?openid=&#123;&#125;&apos;.format(openid))</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">@require_GET</span><br><span class="line">def set_user_info(request):</span><br><span class="line">    openid = request.GET.get(&apos;openid&apos;, &apos;&apos;)</span><br><span class="line">    if openid:</span><br><span class="line">        user = User.objects.get(username=openid)</span><br><span class="line">        userextend, _ = UserExtend.objects.get_or_create(user=user)</span><br><span class="line">        userextend.refresh_user_info()</span><br><span class="line">        user.save()</span><br><span class="line">        auth.login(request, user)</span><br><span class="line">        return_dict = &#123;&apos;errmsg&apos;: &apos;success&apos;, &apos;errcode&apos;: 0&#125;</span><br><span class="line">        return_dict.update(userextend.get_info())</span><br><span class="line">        userextend.save()</span><br><span class="line">        if userextend.once_in:</span><br><span class="line">            return HttpResponseRedirect(&apos;/static/mine.html?redirected=true&apos;)</span><br><span class="line">        else:</span><br><span class="line">            return HttpResponseRedirect(&apos;/static/index.html?redirected=true&apos;)</span><br><span class="line">    else:</span><br><span class="line">        return JsonResponse(&#123;&apos;errmsg&apos;: &apos;no openid&apos;, &apos;errcode&apos;: 1&#125;)</span><br></pre></td></tr></table></figure>
+<p>这就是主要的处理微信授权登录的两个函数。在开发的过程中，可以发现，微信内置的浏览器可能会出现<code>cookie</code>丢失的情况。就是说，微信里面的<code>cookie</code>不是持久的，而且保存的时间也不确定，所以我们的处理方式是，用户每次打开微网站时，前端都引导用户打开授权链接，然后使用<code>django</code>自带的认证系统，对用户进行登录操作。</p>
+<p>同时增加检测用户是否在线和重新登录的API，来解决用户可能在跳转页面的时候，<code>cookie</code>就丢失的情况(但是这种情况我还没有遇到过)。</p>
+<h2 id="图片解码"><a href="#图片解码" class="headerlink" title="图片解码"></a>图片解码</h2><p>还碰到的一个需求是，前端调用的一个生成图片的库是不支持跨域图片合成的，但是我们需要用到用户的头像，用户的头像是微信服务器里面的，是在线的图像，因而这里就有跨域的问题。可是我也不想把用户的头像存在自己的服务器里，所以可以返回图像的base64的编码，反正是头像，也不会很大。</p>
+<p>所以主要的函数就如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserExtend</span>:</span></span><br><span class="line"></span><br><span class="line">	......</span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_img_base64</span><span class="params">(self)</span>:</span></span><br><span class="line">        img_url = self.avatarUrl</span><br><span class="line">        resp = requests.get(img_url, stream=<span class="keyword">True</span>)</span><br><span class="line">        base64_string = <span class="string">''</span></span><br><span class="line">        <span class="keyword">if</span> resp.status_code == <span class="number">200</span>:</span><br><span class="line">            image_data = resp.content</span><br><span class="line">            base64_data = base64.b64encode(image_data)</span><br><span class="line">            base64_string = base64_data.decode(<span class="string">'utf-8'</span>)</span><br><span class="line">        <span class="keyword">return</span> base64_string</span><br></pre></td></tr></table></figure>
+<h2 id="微信链接的分享"><a href="#微信链接的分享" class="headerlink" title="微信链接的分享"></a>微信链接的分享</h2><p>我们还需要实现微信的链接分享，这里需要调用微信的<code>JS-SDK</code>的接口，获取“分享到朋友圈”和“分享给朋友”的自定义内容分享接口如下:</p>
+<ul>
+<li>获取“分享到朋友圈”按钮点击状态及自定义分享内容接口（即将废弃）:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wx.onMenuShareTimeline(&#123;</span><br><span class="line">    title: &apos;&apos;, // 分享标题</span><br><span class="line">    link: &apos;&apos;, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致</span><br><span class="line">    imgUrl: &apos;&apos;, // 分享图标</span><br><span class="line">    success: function () &#123;</span><br><span class="line">    // 用户点击了分享后执行的回调函数</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<ul>
+<li>获取“分享给朋友”按钮点击状态及自定义分享内容接口（即将废弃）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">wx.onMenuShareAppMessage(&#123;</span><br><span class="line">title: &apos;&apos;, // 分享标题</span><br><span class="line">desc: &apos;&apos;, // 分享描述</span><br><span class="line">link: &apos;&apos;, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致</span><br><span class="line">imgUrl: &apos;&apos;, // 分享图标</span><br><span class="line">type: &apos;&apos;, // 分享类型,music、video或link，不填默认为link</span><br><span class="line">dataUrl: &apos;&apos;, // 如果type是music或video，则要提供数据链接，默认为空</span><br><span class="line">success: function () &#123;</span><br><span class="line">// 用户点击了分享后执行的回调函数</span><br><span class="line">&#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>官方文档上面写道,所有需要使用<code>JS-SDK</code>的页面必须先注入配置信息，否则将无法调用（同一个<code>url</code>仅需调用一次，对于变化<code>ur</code>l的<code>SPA</code>的<code>web app</code>可在每次<code>url</code>变化时进行调用,目前<code>Android</code>微信客户端不支持<code>pushState</code>的<code>H5</code>新特性，所以使用<code>pushState</code>来实现<code>web app</code>的页面会导致签名失败，此问题会在<code>Android6.2</code>中修复）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">wx.config(&#123;</span><br><span class="line">    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。</span><br><span class="line">    appId: &apos;&apos;, // 必填，公众号的唯一标识</span><br><span class="line">    timestamp: , // 必填，生成签名的时间戳</span><br><span class="line">    nonceStr: &apos;&apos;, // 必填，生成签名的随机串</span><br><span class="line">    signature: &apos;&apos;,// 必填，签名</span><br><span class="line">    jsApiList: [] // 必填，需要使用的JS接口列表</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>所以，签名算法的接口如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># wx_security.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> HttpRequest, JsonResponse</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> binascii <span class="keyword">import</span> b2a_hex</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_js_signature</span><span class="params">(ticket, nonce, timestamp, url)</span>:</span></span><br><span class="line">    origin = <span class="string">'jsapi_ticket=&#123;0&#125;&amp;noncestr=&#123;1&#125;&amp;timestamp=&#123;2&#125;&amp;url=&#123;3&#125;'</span>.format(ticket,nonce,timestamp,url)</span><br><span class="line">    s=hashlib.sha1(origin)</span><br><span class="line">    <span class="keyword">return</span> s.hexdigest()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">wx_user_verify</span><span class="params">(fn)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_request</span><span class="params">(response)</span>:</span></span><br><span class="line">        openid = <span class="keyword">None</span></span><br><span class="line">        enc = <span class="keyword">None</span></span><br><span class="line">        dic = response.POST</span><br><span class="line">        <span class="keyword">if</span> <span class="string">'openid'</span> <span class="keyword">in</span> dic.keys():</span><br><span class="line">            openid = dic[<span class="string">'openid'</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'msg'</span>: <span class="string">"缺少参数"</span>&#125;, status=<span class="number">403</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">'id'</span> <span class="keyword">in</span> dic.keys():</span><br><span class="line">            enc = dic[<span class="string">'id'</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'msg'</span>: <span class="string">"缺少参数"</span>&#125;, status=<span class="number">403</span>)</span><br><span class="line">        <span class="keyword">if</span> wx_security().validate_openid_encryption(openid, enc) == <span class="keyword">True</span>:</span><br><span class="line">            <span class="keyword">return</span> fn(response)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'msg'</span>: <span class="string">"认证失败"</span>&#125;, status=<span class="number">403</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> handle_request</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">singleton</span><span class="params">(cls, *args, **kw)</span>:</span></span><br><span class="line">    instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_singleton</span><span class="params">()</span>:</span></span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> instances:</span><br><span class="line">            instances[cls] = cls(*args, **kw)</span><br><span class="line">        <span class="keyword">return</span> instances[cls]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> _singleton</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">wx_security</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        key = <span class="string">'===dmlraW5nd2FybG9jaw==='</span></span><br><span class="line">        mode = AES.MODE_CBC</span><br><span class="line">        self.encryptor = AES.new(key, mode, <span class="string">b'0000000000000000'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encrypt_openid</span><span class="params">(self, openid)</span>:</span></span><br><span class="line">        offset = <span class="number">16</span> - len(openid) % <span class="number">16</span></span><br><span class="line">        <span class="keyword">if</span> offset == <span class="number">16</span>:</span><br><span class="line">            offset = <span class="number">0</span></span><br><span class="line">        encrypted = self.encryptor.encrypt(openid + <span class="string">' '</span> * offset)</span><br><span class="line">        <span class="keyword">return</span> b2a_hex(encrypted)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">decrypt_openid</span><span class="params">(self, encryption)</span>:</span></span><br><span class="line">        plain = self.encryptor.decrypt(encryption)</span><br><span class="line">        <span class="keyword">return</span> plain</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">validate_openid_encryption</span><span class="params">(self, openid, encryption)</span>:</span></span><br><span class="line">        enc = self.encrypt_openid(openid)</span><br><span class="line">        <span class="comment"># print enc</span></span><br><span class="line">        <span class="comment"># print encryption</span></span><br><span class="line">        <span class="keyword">if</span> enc == encryption:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line">            </span><br><span class="line">            </span><br><span class="line"><span class="comment"># views.py</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@csrf_exempt</span></span><br><span class="line"><span class="meta">@require_POST</span></span><br><span class="line"><span class="meta">@wx_user_verify</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">wechat_js_auth</span><span class="params">(request)</span>:</span></span><br><span class="line">    u = <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        u = request.POST[<span class="string">'url'</span>]</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'msg'</span>: <span class="string">'参数不足'</span> + e.message&#125;, status=<span class="number">400</span>)</span><br><span class="line">    noncestr = str(uuid.uuid1()).replace(<span class="string">'-'</span>, <span class="string">''</span>)</span><br><span class="line">    timestamp = arrow.now().timestamp</span><br><span class="line">    appid = wechat.configuration.wx_app_id</span><br><span class="line">    ticket = wechat.configuration.get_js_token()</span><br><span class="line">    signature = generate_js_signature(ticket, noncestr, timestamp, u)</span><br><span class="line">    js_list = [<span class="string">'getLocation'</span>, <span class="string">'getNetworkType'</span>, <span class="string">'hideOptionMenu'</span>, <span class="string">'showOptionMenu'</span>, <span class="string">'closeWindow'</span>]</span><br><span class="line">    <span class="keyword">return</span> JsonResponse(</span><br><span class="line">        &#123;<span class="string">'appId'</span>: appid, <span class="string">'timestamp'</span>: timestamp, <span class="string">'nonceStr'</span>: noncestr, <span class="string">'signature'</span>: signature, <span class="string">'jsApiList'</span>: js_list&#125;,</span><br><span class="line">        status=<span class="number">200</span>)</span><br></pre></td></tr></table></figure>
+<p>这里需要注意的是<code>url</code>这个参数在官方文档说明中的意义不是很明确:</p>
+<ul>
+<li>url(当前网页的URL，不包含#及其后面部分)</li>
+<li>签名用的url必须是调用JS接口页面的完整URL。</li>
+</ul>
+<p>这里是官网说明的两个地方，当时看得我一头雾水，但是在后来的尝试下发现，<code>url</code>指的就是前端调用<code>JS-SDK</code>的<code>url</code>，所以这里务必注意，比如前端在<code>index.html</code>里面调用这个接口，传过来的路径应该是<code>xxx.com/static/index.html</code>这样。</p>
+<p>以上就是在这次微信网站开发过程中主要遇到的坑。总的来说，还是比较简单的吧，通过查阅文档等方式，一路下来还是非常顺畅的。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/07/27/Django静态文件处理/" class="archive-article-date">
-  	<time datetime="2017-07-27T04:35:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/07/27/Django静态文件处理/">Django静态文件处理</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/07/21/python使用smtplib库发送邮件/" class="archive-article-date">
-  	<time datetime="2017-07-21T03:06:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/07/21/python使用smtplib库发送邮件/">python使用smtplib库发送邮件</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/07/18/Django拓展内建User模型字段/" class="archive-article-date">
-  	<time datetime="2017-07-18T14:38:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-18</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/07/18/Django拓展内建User模型字段/">Django拓展内建User模型字段</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/07/14/MongoEngine初探/" class="archive-article-date">
-  	<time datetime="2017-07-14T06:30:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/07/14/MongoEngine初探/">MongoEngine初探</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Django</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">MongoEngine</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">MongoDB</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Wechat</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/04/28/some-pits-in-WeChat-public-number-development/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2018/07/29/django-queryset-API/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          django的查询API
+        
+      </div>
+    </a>
   
   
-    </div></section>
+    <a href="/2018/04/07/python-descriptor/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">python描述符</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -348,8 +368,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
