@@ -15,7 +15,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/04/28/some-pits-in-WeChat-public-number-development/index.html">
 <meta property="og:site_name" content="Vessalius的博客">
 <meta property="og:description" content="这几天在做一个小项目，主要是在微信公众平台下面的开发，在公众号里面开发一个微网站。下面就记录一些在开发过程中遇到的坑。">
-<meta property="og:updated_time" content="2018-08-09T07:36:24.319Z">
+<meta property="og:updated_time" content="2018-08-09T07:38:10.505Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="微信公众号开发的一点坑">
 <meta name="twitter:description" content="这几天在做一个小项目，主要是在微信公众平台下面的开发，在公众号里面开发一个微网站。下面就记录一些在开发过程中遇到的坑。">
@@ -188,7 +188,7 @@
 <p>方案是先将接口返回的字符串编码成ISO-8859-1的字节流，然后再以UTF-8解码成字符串。</p>
 <p>所以，我搞不懂这个<code>lang=zh_CN</code>到底有什么意义呢。。。。</p>
 <h4 id="授权登录"><a href="#授权登录" class="headerlink" title="授权登录"></a>授权登录</h4><p>授权登录还是困扰了我一段时间的，不过最后发现当时有问题的地方，还是自己的代码写的有问题。接收授权请求的<code>view</code>代码主要如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@require_GET</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">authorize</span><span class="params">(request)</span>:</span></span><br><span class="line">    code = request.GET.get(<span class="string">'code'</span>, <span class="string">''</span>)</span><br><span class="line">    state = request.GET.get(<span class="string">'state'</span>, <span class="string">''</span>)</span><br><span class="line">    params = dict()</span><br><span class="line">    <span class="keyword">if</span> state:</span><br><span class="line">        raw_kvPairs = state.split(<span class="string">','</span>)</span><br><span class="line">        <span class="keyword">for</span> pair <span class="keyword">in</span> raw_kvPairs:</span><br><span class="line">            key, value = pair.split(<span class="string">'='</span>)</span><br><span class="line">            params[key] = value</span><br><span class="line">    appid = config.APPID</span><br><span class="line">    appsecret = config.APPSECRET</span><br><span class="line">    api = config.web_token_api.format(appid, appsecret, code)</span><br><span class="line"></span><br><span class="line">    user_info = requests.get(api).json()</span><br><span class="line"></span><br><span class="line">    openid = user_info.get(<span class="string">'openid'</span>)</span><br><span class="line">    web_access_token = user_info.get(<span class="string">'access_token'</span>)</span><br><span class="line">    refresh_token = user_info.get(<span class="string">'refresh_token'</span>)</span><br><span class="line">    user, _ = User.objects.get_or_create(username=openid)</span><br><span class="line">    user.save()</span><br><span class="line">    session_token, _ = SessionToken.objects.get_or_create(user=user)</span><br><span class="line">    session_token.web_access_token = web_access_token</span><br><span class="line">    session_token.refresh_token = refresh_token</span><br><span class="line">    session_token.save()</span><br><span class="line">    <span class="keyword">return</span> HttpResponseRedirect(<span class="string">'/api/auth/set_user_info/?openid=&#123;&#125;'</span>.format(openid))</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="meta">@require_GET</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">set_user_info</span><span class="params">(request)</span>:</span></span><br><span class="line">    openid = request.GET.get(<span class="string">'openid'</span>, <span class="string">''</span>)</span><br><span class="line">    <span class="keyword">if</span> openid:</span><br><span class="line">        user = User.objects.get(username=openid)</span><br><span class="line">        userextend, _ = UserExtend.objects.get_or_create(user=user)</span><br><span class="line">        userextend.refresh_user_info()</span><br><span class="line">        user.save()</span><br><span class="line">        auth.login(request, user)</span><br><span class="line">        return_dict = &#123;<span class="string">'errmsg'</span>: <span class="string">'success'</span>, <span class="string">'errcode'</span>: <span class="number">0</span>&#125;</span><br><span class="line">        return_dict.update(userextend.get_info())</span><br><span class="line">        userextend.save()</span><br><span class="line">        <span class="keyword">if</span> userextend.once_in:</span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(<span class="string">'/static/mine.html?redirected=true'</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(<span class="string">'/static/index.html?redirected=true'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'errmsg'</span>: <span class="string">'no openid'</span>, <span class="string">'errcode'</span>: <span class="number">1</span>&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@require_GET</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">authorize</span><span class="params">(request)</span>:</span></span><br><span class="line">    code = request.GET.get(<span class="string">'code'</span>, <span class="string">''</span>)</span><br><span class="line">    state = request.GET.get(<span class="string">'state'</span>, <span class="string">''</span>)</span><br><span class="line">    params = dict()</span><br><span class="line">    <span class="keyword">if</span> state:</span><br><span class="line">        raw_kvPairs = state.split(<span class="string">','</span>)</span><br><span class="line">        <span class="keyword">for</span> pair <span class="keyword">in</span> raw_kvPairs:</span><br><span class="line">            key, value = pair.split(<span class="string">'='</span>)</span><br><span class="line">            params[key] = value</span><br><span class="line">    appid = config.APPID</span><br><span class="line">    appsecret = config.APPSECRET</span><br><span class="line">    api = config.web_token_api.format(appid, appsecret, code)</span><br><span class="line"></span><br><span class="line">    user_info = requests.get(api).json()</span><br><span class="line"></span><br><span class="line">    openid = user_info.get(<span class="string">'openid'</span>)</span><br><span class="line">    web_access_token = user_info.get(<span class="string">'access_token'</span>)</span><br><span class="line">    refresh_token = user_info.get(<span class="string">'refresh_token'</span>)</span><br><span class="line">    user, _ = User.objects.get_or_create(username=openid)</span><br><span class="line">    user.save()</span><br><span class="line">    session_token, _ = SessionToken.objects.get_or_create(user=user)</span><br><span class="line">    session_token.web_access_token = web_access_token</span><br><span class="line">    session_token.refresh_token = refresh_token</span><br><span class="line">    session_token.save()</span><br><span class="line">    <span class="keyword">return</span> HttpResponseRedirect(<span class="string">'/api/auth/set_user_info/?openid=&#123;&#125;'</span>.format(openid))</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="meta">@require_GET</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">set_user_info</span><span class="params">(request)</span>:</span></span><br><span class="line">    openid = request.GET.get(<span class="string">'openid'</span>, <span class="string">''</span>)</span><br><span class="line">    <span class="keyword">if</span> openid:</span><br><span class="line">        user = User.objects.get(username=openid)</span><br><span class="line">        userextend, _ = UserExtend.objects.get_or_create(user=user)</span><br><span class="line">        userextend.refresh_user_info()</span><br><span class="line">        user.save()</span><br><span class="line">        auth.login(request, user)</span><br><span class="line">        return_dict = &#123;<span class="string">'errmsg'</span>: <span class="string">'success'</span>, <span class="string">'errcode'</span>: <span class="number">0</span>&#125;</span><br><span class="line">        return_dict.update(userextend.get_info())</span><br><span class="line">        userextend.save()</span><br><span class="line">        <span class="keyword">if</span> userextend.once_in:</span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(<span class="string">'/static/mine.html?redirected=true'</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> HttpResponseRedirect(<span class="string">'/static/index.html?redirected=true'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">'errmsg'</span>: <span class="string">'no openid'</span>, <span class="string">'errcode'</span>: <span class="number">1</span>&#125;)</span><br></pre></td></tr></table></figure>
 <p>这就是主要的处理微信授权登录的两个函数。在开发的过程中，可以发现，微信内置的浏览器可能会出现<code>cookie</code>丢失的情况。就是说，微信里面的<code>cookie</code>不是持久的，而且保存的时间也不确定，所以我们的处理方式是，用户每次打开微网站时，前端都引导用户打开授权链接，然后使用<code>django</code>自带的认证系统，对用户进行登录操作。</p>
 <p>同时增加检测用户是否在线和重新登录的API，来解决用户可能在跳转页面的时候，<code>cookie</code>就丢失的情况(但是这种情况我还没有遇到过)。</p>
 <h2 id="图片解码"><a href="#图片解码" class="headerlink" title="图片解码"></a>图片解码</h2><p>还碰到的一个需求是，前端调用的一个生成图片的库是不支持跨域图片合成的，但是我们需要用到用户的头像，用户的头像是微信服务器里面的，是在线的图像，因而这里就有跨域的问题。可是我也不想把用户的头像存在自己的服务器里，所以可以返回图像的base64的编码，反正是头像，也不会很大。</p>
@@ -442,38 +442,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">django</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">源码分析</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">nginx</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Wechat</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">uwsgi</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">model</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C语言</a>
               </li>
              
@@ -482,7 +450,39 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">django</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">源码分析</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">nginx</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Wechat</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">model</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">xadmin</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">uwsgi</a>
               </li>
             
             <div class="clearfix"></div>
